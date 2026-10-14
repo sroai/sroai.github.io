@@ -32,13 +32,13 @@ themselves — the cards are produced by `generate_datasets` (local glob,
 | `21_create_npsim_saveall_jobs.py`     | Same as above, but keeping **all** hits incl. tracking volumes |
 | `22_create_npsim_background_jobs.py`  | `npsim` over background-merged HEPMC                       |
 | `30_create_eicrecon_jobs.py`          | Run `EICrecon` reconstruction                             |
-| `40_csv_convert.py <stage>`           | **One** CSV script for every csv stage — runs the config's converter macros (`edm4hep_*` for `csv_dd4hep`, `edm4eic_*` for `csv_eicrecon`). See [CSV Convert](/csv-convert). |
+| `40_csv_convert.py <stage>`           | **One** CSV script for every csv stage — runs the config's converter macros (`edm4hep_*` for `csv_dd4hep`, `edm4eic_*` for `csv_eicrecon`). See [CSV Convert](/ai-epic-background/csv-convert). |
 | `50_create_analysis_jobs.py`          | Run physics analysis on CSV                               |
 | `51_create_root_analysis_jobs.py`     | Run physics analysis directly on ROOT                     |
 | `generate_datasets.py`                | Universal dataset-card producer (local glob / `--rucio` / `--files`) |
 | `datasets.py`                         | Card schema, config loader, `run_card_pipeline`           |
 | `rucio.py`                            | Rucio dataset discovery (official campaigns)              |
-| `job_creator.py`                      | Shared `JobCreator` class — see [Job Creator](/full-sim-pipeline-jobs) |
+| `job_creator.py`                      | Shared `JobCreator` class — see [Job Creator](/ai-epic-background/full-sim-pipeline-jobs) |
 | `scripts/collect_job_stats.py`        | Aggregate timings / exit codes across a campaign          |
 
 Each `NN_*.py` stage script is the same shape: load the YAML config, read the
@@ -59,10 +59,10 @@ Each campaign has its own self-contained YAML file under `configs/`, e.g.:
 These files set the campaign's base directory, container image, beam energies,
 event count, per-stage input/output paths, and each csv stage's `macros:` list.
 There is no inheritance — open one file and you see the whole picture. See the
-[Campaigns page](/full-sim-pipeline-campaigns) for details and conventions.
+[Campaigns page](/ai-epic-background/full-sim-pipeline-campaigns) for details and conventions.
 
 ## Continue reading
 
-- [Job Creator](/full-sim-pipeline-jobs) — the shared `JobCreator` class.
-- [Campaigns](/full-sim-pipeline-campaigns) — config-file conventions, list of
+- [Job Creator](/ai-epic-background/full-sim-pipeline-jobs) — the shared `JobCreator` class.
+- [Campaigns](/ai-epic-background/full-sim-pipeline-campaigns) — config-file conventions, list of
   campaigns, and how to start a new one.

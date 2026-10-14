@@ -33,9 +33,9 @@ uv.lock
 Thumbs.db
 
 # VitePress / Node
-docs/node_modules/
-docs/.vitepress/cache/
-docs/.vitepress/dist/
+node_modules/
+.vitepress/cache/
+.vitepress/dist/
 
 # Output data (do not commit campaign products)
 data/
@@ -52,6 +52,4 @@ logs/
 .claude/*
 !.claude/skills/
 
-csv_convert/build-docker/
 
-synrad_dis.err

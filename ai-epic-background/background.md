@@ -193,7 +193,7 @@ Outputs of the campaign land in
 `xroots://dtn2201.jlab.org//eic/eic2/EPIC/{RECO,FULL,LOG}/<release>/<detector>/...`
 and are registered to Rucio under account `eicprod` with a metadata schema
 that includes `is_background_mixed: true|false`. The `update-data-md` skill
-in this repo queries Rucio with that flag to rebuild `docs/data.md`.
+in this repo queries Rucio with that flag to rebuild `ai-epic-background/data.md`.
 
 Mixed simulation outputs from official campaigns can also be browsed
 directly:

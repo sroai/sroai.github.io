@@ -1,6 +1,6 @@
 # Data Format
 
-CSV is produced by the [converter macros](/csv-convert) in `csv_convert/`, one
+CSV is produced by the [converter macros](/ai-epic-background/csv-convert) in `csv_convert/`, one
 per *role*. Each converter has its own column layout; there is no single shared
 schema. Files are named `<input-stem>.<role>.csv` (e.g.
 `msf_9x130_0001.trk_hits.csv`), so the role in the filename tells you which

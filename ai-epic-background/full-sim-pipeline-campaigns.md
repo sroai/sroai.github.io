@@ -3,7 +3,7 @@
 A "campaign" is a coherent production run with a fixed container image, a fixed
 beam-energy set, and a fixed output base directory. Each one lives in its own
 **self-contained** YAML config under `configs/` in the
-[`simulation-pipeline`](/full-sim-pipeline) submodule — no inheritance, no base
+[`simulation-pipeline`](/ai-epic-background/full-sim-pipeline) submodule — no inheritance, no base
 files.
 
 ## Existing campaigns

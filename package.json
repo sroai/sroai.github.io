@@ -1,8 +1,8 @@
 {
-  "name": "ai-epic-background-docs",
+  "name": "sroai-website",
   "version": "0.1.0",
   "private": true,
-  "description": "Documentation site for the EIC AI Background analysis project — full-sim background pipeline and CSV-based AI/ML datasets for the Electron Ion Collider.",
+  "description": "SRO AI website: AI for streaming readout, and the EIC AI Background project documentation.",
   "scripts": {
     "dev": "vitepress dev",
     "build": "vitepress build",
@@ -10,29 +10,29 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/eic/ai-epic-background"
+    "url": "https://github.com/sroai/sroai.github.io"
   },
   "keywords": [
     "EIC",
     "Electron Ion Collider",
     "ePIC",
+    "streaming readout",
     "background",
     "AI",
     "ML",
     "machine learning",
     "physics",
     "simulation",
-    "tracking",
     "VitePress"
   ],
-  "author": "EIC AI Background Group",
+  "author": "SRO AI",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/eic/ai-epic-background/issues"
+    "url": "https://github.com/sroai/sroai.github.io/issues"
   },
-  "homepage": "https://eic.github.io/ai-epic-background/",
+  "homepage": "https://sroai.github.io/",
   "devDependencies": {
-    "vitepress": "^2.0.0-alpha.17",
+    "vitepress": "2.0.0-alpha.20",
     "vitepress-plugin-lightbox": "^1.0.3",
     "echarts": "^6.1.0"
   }

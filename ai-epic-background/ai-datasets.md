@@ -1,6 +1,6 @@
 # AI / ML Datasets
 
-The CSVs produced by [`csv_convert/`](/csv-convert) are designed to drop directly
+The CSVs produced by [`csv_convert/`](/ai-epic-background/csv-convert) are designed to drop directly
 into Python data-science and ML stacks. This page covers a few common loading
 patterns.
 
@@ -64,7 +64,7 @@ class TrackerHitsDataset(Dataset):
 ```
 
 For multi-file datasets, point a Dataset at a directory of `*.csv.zip` (which is
-exactly what the [CSV conversion jobs](/csv-convert-snakemake) write next to each
+exactly what the [CSV conversion jobs](/ai-epic-background/csv-convert-snakemake) write next to each
 CSV output) and stream files lazily.
 
 ## Useful filters
@@ -100,5 +100,5 @@ preprocessing of the ROOT files is required.
 
 ## Schema reference
 
-See the [Data Format](/data-format) page for the complete column list, units,
+See the [Data Format](/ai-epic-background/data-format) page for the complete column list, units,
 and the `HitRecord` struct that produces them.

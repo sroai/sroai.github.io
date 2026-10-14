@@ -3,12 +3,12 @@
 > The old Snakemake workflow (`Snakefile`, `run_jlab_slurm.sh`, `uv`-managed
 > deps) is **retired**. CSV conversion is now driven by
 > `40_csv_convert.py`, which emits SLURM **job arrays** through the shared
-> [`JobCreator`](/full-sim-pipeline-jobs). This page covers how those jobs are
+> [`JobCreator`](/ai-epic-background/full-sim-pipeline-jobs). This page covers how those jobs are
 > laid out and submitted.
 
 ## Generating the jobs
 
-See [Running the Converter](/csv-convert-running) — in short:
+See [Running the Converter](/ai-epic-background/csv-convert-running) — in short:
 
 ```bash
 cd simulation-pipeline
@@ -70,7 +70,7 @@ hand:
   rather than seconds (admins flag sub-2-minute jobs).
 
 These knobs are config fields (`farm_out_dir`, `slurm_mem_per_cpu`,
-`slurm_files_per_job`) — see the [Full-Sim Pipeline](/full-sim-pipeline).
+`slurm_files_per_job`) — see the [Full-Sim Pipeline](/ai-epic-background/full-sim-pipeline).
 
 ## Prerequisites
 

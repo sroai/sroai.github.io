@@ -1,6 +1,6 @@
 # CSV Convert
 
-`csv_convert/` (inside the [`simulation-pipeline`](/full-sim-pipeline) submodule)
+`csv_convert/` (inside the [`simulation-pipeline`](/ai-epic-background/full-sim-pipeline) submodule)
 is a set of **ROOT converter macros** that turn ePIC podio ROOT files into flat
 CSV ready for analysis or ML training. There is one macro per *role* — one kind
 of dump (reco particles, tracker hits, DIS kinematics, …) — rather than a single
@@ -40,7 +40,7 @@ output: msf_9x130_0001.reco_particles.csv   (+ .zip)
 | `edm4hep_acceptance_npi0.cxx` | edm4hep | n·π⁰ acceptance |
 | `edm4hep_combinatorics_ppim.cxx` | edm4hep | p·π⁻ combinatorics |
 
-See [Data Format](/data-format) for the exact column layout, using
+See [Data Format](/ai-epic-background/data-format) for the exact column layout, using
 `edm4eic_trk_hits` as the worked example.
 
 ## How converters are driven
@@ -58,8 +58,8 @@ csv_eicrecon:
 `40_csv_convert.py csv_dd4hep` runs the `edm4hep_*` macros a config names;
 `40_csv_convert.py csv_eicrecon` the `edm4eic_*` ones. The script is the same for
 both — which data model is read is entirely the config's business. See
-[Running the Converter](/csv-convert-running) and the
-[Full-Sim Pipeline](/full-sim-pipeline).
+[Running the Converter](/ai-epic-background/csv-convert-running) and the
+[Full-Sim Pipeline](/ai-epic-background/full-sim-pipeline).
 
 ## Pipeline
 
@@ -81,6 +81,6 @@ We store the extracted data as **CSV** because:
 
 ## Continue reading
 
-- [Running the Converter](/csv-convert-running) — run one macro by hand, or generate jobs for a whole campaign.
-- [Batch on SLURM](/csv-convert-snakemake) — how CSV jobs are queued as SLURM arrays.
-- [Data Format](/data-format) — exact column layout of the CSV.
+- [Running the Converter](/ai-epic-background/csv-convert-running) — run one macro by hand, or generate jobs for a whole campaign.
+- [Batch on SLURM](/ai-epic-background/csv-convert-snakemake) — how CSV jobs are queued as SLURM arrays.
+- [Data Format](/ai-epic-background/data-format) — exact column layout of the CSV.

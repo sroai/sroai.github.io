@@ -37,8 +37,8 @@ Key parameters (from each dataset's `rucio_metadata`):
 
 The conversion streams each ROOT file directly over XRootD (no local copy) and
 runs the `edm4eic_*` converter macros inside the campaign container. See
-[CSV Convert](/csv-convert) for the converters themselves and
-[Available Datasets](/data) for the full Rucio catalogue.
+[CSV Convert](/ai-epic-background/csv-convert) for the converters themselves and
+[Available Datasets](/ai-epic-background/data) for the full Rucio catalogue.
 
 Two pipeline steps drive it:
 

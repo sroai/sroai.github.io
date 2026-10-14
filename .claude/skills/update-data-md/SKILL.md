@@ -1,11 +1,11 @@
 ---
 name: update-data-md
-description: Use this skill when the user asks to update, refresh, regenerate, or rebuild `docs/data.md` — the catalog of available ePIC background-mixed datasets in Rucio. The skill queries Rucio for all DIDs with `is_background_mixed=true`, drops the CI/`main` branch entries, groups the remaining real-campaign DIDs by campaign → data name, and helps you hand-author one `<DidStrips>` block per data name (with per-row and per-strip copy buttons and hover-tooltip tags). Trigger phrases: "update data.md", "refresh the data catalog", "regenerate data page", "pull the new datasets from rucio", "what backgrounds are on rucio", "list available DIDs".
+description: Use this skill when the user asks to update, refresh, regenerate, or rebuild `ai-epic-background/data.md` — the catalog of available ePIC background-mixed datasets in Rucio. The skill queries Rucio for all DIDs with `is_background_mixed=true`, drops the CI/`main` branch entries, groups the remaining real-campaign DIDs by campaign → data name, and helps you hand-author one `<DidStrips>` block per data name (with per-row and per-strip copy buttons and hover-tooltip tags). Trigger phrases: "update data.md", "refresh the data catalog", "regenerate data page", "pull the new datasets from rucio", "what backgrounds are on rucio", "list available DIDs".
 ---
 
-# Update `docs/data.md`
+# Update `ai-epic-background/data.md`
 
-`docs/data.md` is the project's human-readable catalog of background-mixed
+`ai-epic-background/data.md` is the project's human-readable catalog of background-mixed
 datasets available in Rucio. Its source of truth is the output of
 `rucio did list --filter 'is_background_mixed=true' 'epic:*'`.
 
@@ -19,7 +19,7 @@ parse into tags, so don't try. There is also not much data (a handful of
 strips), so authoring by hand is quick.
 
 Your job: query Rucio, digest the result with the helper script, then **edit
-`docs/data.md` directly** — add/update one `<DidStrips>` block per
+`ai-epic-background/data.md` directly** — add/update one `<DidStrips>` block per
 `(campaign, data_name)`, choosing sensible tag groups, colours, and tooltips.
 
 > Prior versions of this page used an auto-generated `<DidTable>`. That is
@@ -56,7 +56,7 @@ responsibility, not the skill's.
 ## 2. Digest the DIDs with the helper
 
 `scripts/summarize_rucio_dids.py` is **read-only** — it never writes
-`docs/data.md`. It parses the Rucio table, drops `main/` and non-`FULL`/`RECO`
+`ai-epic-background/data.md`. It parses the Rucio table, drops `main/` and non-`FULL`/`RECO`
 and non-`epic_craterlake` entries, groups by `(campaign, data_name)`, and for
 each group prints exactly the material you need to author a strip:
 
@@ -81,9 +81,9 @@ Read this output; it tells you what varies (→ tag groups) and what is fixed
 
 ---
 
-## 3. Author `<DidStrips>` blocks in `docs/data.md`
+## 3. Author `<DidStrips>` blocks in `ai-epic-background/data.md`
 
-Edit `docs/data.md` by hand. The generated strips live between the
+Edit `ai-epic-background/data.md` by hand. The generated strips live between the
 `<!-- BEGIN STRIPS -->` and `<!-- END STRIPS -->` markers (Rucio campaigns);
 the JLab-xrootd `25.10` strips and all surrounding prose (intro, conventions,
 "Using these DIDs") are hand-edited and stay as they are unless the data
@@ -165,19 +165,19 @@ concept across strips (e.g. `violet` = physics process, `sky` = beam energy,
 
 ## 4. Wire `data.md` into the docs
 
-Already done in `docs/.vitepress/config.mts` (top nav `Data` → `/data`;
+Already done in `.vitepress/config.mts` (top nav `Data` → `/data`;
 sidebar `Data` → `Available Datasets`). If those entries went missing after a
 config rewrite, add them back.
 
 `<DidStrips>` and its child markers `Tags` / `Tag` / `More` / `Dids` are
-globally registered in `docs/.vitepress/theme/index.ts`, so no per-page
+globally registered in `.vitepress/theme/index.ts`, so no per-page
 imports are needed.
 
 ---
 
 ## 5. Commit
 
-`docs/data.md` is the only artefact to commit. Do **not** commit the raw
+`ai-epic-background/data.md` is the only artefact to commit. Do **not** commit the raw
 Rucio output (`/tmp/rucio.txt`). Typical message:
 
 ```
@@ -197,7 +197,7 @@ docs: refresh data.md from rucio (N DIDs across M campaigns)
   and per-row 📋 work, the prefix line copies.
 
 Then report to the user: number of campaigns, number of DIDs, the path written
-(`docs/data.md`), and how many `main/` entries were skipped.
+(`ai-epic-background/data.md`), and how many `main/` entries were skipped.
 
 ---
 
@@ -210,7 +210,7 @@ Then report to the user: number of campaigns, number of DIDs, the path written
   `.../SIDIS/D0_ABCONV/pythia8.306-1.1/10x100/q2_100/hiDiv`). Their extra
   segments show up as their own varying positions in the helper output —
   decide per case whether each becomes a tag or goes in `<More>`.
-- The component lives at `docs/.vitepress/theme/components/DidStrips.vue`;
+- The component lives at `.vitepress/theme/components/DidStrips.vue`;
   its header comment and
-  `docs/.vitepress/theme/components/DidStrips.README.md` document it in more
+  `.vitepress/theme/components/DidStrips.README.md` document it in more
   depth.
