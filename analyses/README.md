@@ -8,7 +8,7 @@ with its scripts and a short README.
 
 | Folder              | Purpose                                                          |
 | ------------------- | ---------------------------------------------------------------- |
-| `time-vs-z-plots/`  | Per-event scatter plot of tracker hit time vs z, colored by `prt_status`. |
+| `time-vs-z-plots/`  | Per-event scatter plot of tracker hit time vs z, colored by `prt_gen_status`. |
 
 ## Adding a new analysis
 

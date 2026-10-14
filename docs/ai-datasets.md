@@ -46,7 +46,7 @@ FEATURE_COLS = [
     "trk_hit_pos_x", "trk_hit_pos_y", "trk_hit_pos_z", "trk_hit_time",
     "trk_hit_edep", "trk_hit_system_id",
 ]
-LABEL_COLS = ["prt_pdg", "prt_status"]
+LABEL_COLS = ["prt_pdg", "prt_gen_status"]
 
 class TrackerHitsDataset(Dataset):
     def __init__(self, csv_path: str):
@@ -73,10 +73,10 @@ A few common selections you'll want during training:
 
 ```python
 # Primary particles only (generator-level, status == 1)
-primary = df[df["prt_status"] == 1]
+primary = df[df["prt_gen_status"] == 1]
 
 # Geant4-secondaries only (status == 0)
-secondary = df[df["prt_status"] == 0]
+secondary = df[df["prt_gen_status"] == 0]
 
 # Restrict to one detector subsystem
 si_barrel = df[df["trk_hit_system_name"] == "SiBarrelVertex"]
@@ -89,7 +89,7 @@ in_time = df[df["trk_hit_time"].between(-5, 25)]
 
 Some tasks the format naturally supports:
 
-- **Background hit classification** — predict `prt_status == 1` (signal) vs not.
+- **Background hit classification** — predict `prt_gen_status == 1` (signal) vs not.
 - **PID-from-hits** — predict `prt_pdg` from per-hit features.
 - **Track origin regression** — predict `prt_vtx_pos_*` from a hit cluster.
 - **Subsystem prediction / detector ID auxiliary task** — predict

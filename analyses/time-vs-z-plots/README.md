@@ -1,7 +1,7 @@
 # Time-vs-Z plots
 
 Per-event scatter plot of tracker hit time vs z-position, colored by
-`prt_status`. Useful as a first sanity check on a freshly produced CSV from
+`prt_gen_status`. Useful as a first sanity check on a freshly produced CSV from
 [`csv_convert/`](../../csv_convert/).
 
 ## Usage
@@ -21,7 +21,7 @@ This writes two figures:
 - `event_<N>_hits.png` — `time vs z` for the requested event in the [0, 2000] ns window.
 - `event_<N>_hits_full_range.png` — same plot zoomed to the event's actual time span.
 
-Hits are colored by `prt_status` (red for `prt_status == 1`, primary
+Hits are colored by `prt_gen_status` (red for `prt_status == 1`, primary
 generator-level particles).
 
 ## Dependencies

@@ -36,7 +36,7 @@ def create_time_vs_z_plot(df: pd.DataFrame, event_num: int, output_file: str):
     print(f"Event {event_num}: {len(event_df)} hits")
 
     # Get unique prt_status values
-    status_values = sorted(event_df['prt_status'].unique())
+    status_values = sorted(event_df['prt_gen_status'].unique())
     print(f"prt_status values found: {status_values}")
 
     # Define color map - status 1 must be red
@@ -64,7 +64,7 @@ def create_time_vs_z_plot(df: pd.DataFrame, event_num: int, output_file: str):
 
     # Plot each status group
     for status in status_values:
-        status_df = event_df[event_df['prt_status'] == status]
+        status_df = event_df[event_df['prt_gen_status'] == status]
         ax.scatter(
             status_df['trk_hit_time'],
             status_df['trk_hit_pos_z'],
@@ -130,6 +130,8 @@ def main():
     print(f"Reading {args.csv_file}...")
     try:
         df = pd.read_csv(args.csv_file)
+        # CSVs converted before 2026-09-30 carry the macro-era name of the generator status.
+        df = df.rename(columns={"prt_status": "prt_gen_status"})
     except FileNotFoundError:
         print(f"Error: File not found: {args.csv_file}")
         sys.exit(1)

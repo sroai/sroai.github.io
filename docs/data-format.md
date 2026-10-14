@@ -37,7 +37,7 @@ written by `HitRecord::make_csv_header()` in `csv_convert/edm4eic_trk_hits.cxx`.
 | Column        | Unit  | Description                                                      |
 | ------------- | ----- | ---------------------------------------------------------------- |
 | `prt_pdg`     | —     | PDG code (e.g. `11` = e⁻, `211` = π⁺, `2212` = proton)           |
-| `prt_status`  | —     | Generator status: `1` = primary from generator, `0` = G4-created |
+| `prt_gen_status`  | —     | Generator status: `1` = primary from generator, `0` = G4-created |
 | `prt_origin`  | —     | Provenance: `0` unknown, `1` signal, `2` G4-gen from signal, `3` background, `4` G4-gen from background |
 | `prt_energy`  | GeV   | Total energy                                                     |
 | `prt_charge`  | e     | Electric charge                                                  |
@@ -110,7 +110,7 @@ print(df.shape, df.columns.tolist()[:6])
 event_0 = df[df["evt"] == 0]
 
 # Keep only primary particles
-primaries = df[df["prt_status"] == 1]
+primaries = df[df["prt_gen_status"] == 1]
 
 # Signal-only vs background hits
 signal = df[df["prt_origin"].isin([1, 2])]
@@ -122,4 +122,4 @@ hits_per_system = df.groupby("trk_hit_system_name").size()
 
 For visualisation of a single event, see
 `analyses/time-vs-z-plots/background_analysis.py`, which produces `time vs z`
-scatter plots colored by `prt_status`.
+scatter plots colored by `prt_gen_status`.

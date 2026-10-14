@@ -36,7 +36,7 @@ Python analyses that consume the produced CSVs. Each analysis lives in its own
 subfolder with scripts and a short README. Currently:
 
 - `analyses/time-vs-z-plots/` — per-event scatter plot of tracker hit time vs z,
-  colored by `prt_status`.
+  colored by `prt_gen_status`.
 
 ### `full-sim-pipeline/`
 

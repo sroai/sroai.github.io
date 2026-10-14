@@ -80,5 +80,5 @@ uv run python analyses/time-vs-z-plots/background_analysis.py input.trk_hits.csv
 ```
 
 This writes two figures: a `time vs z` scatter plot for the requested event, and a
-companion plot covering the full time range. Hits are colored by `prt_status`
-(red for `prt_status == 1`, primary particles).
+companion plot covering the full time range. Hits are colored by `prt_gen_status`
+(red for `prt_gen_status == 1`, primary particles).
