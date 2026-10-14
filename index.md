@@ -9,8 +9,8 @@ hero:
   tagline: Real-time signal and background separation in continuous nuclear physics data streams
   actions:
     - theme: brand
-      text: EIC AI Background
-      link: /ai-epic-background/
+      text: Data
+      link: /ai-epic-background/data
     - theme: alt
       text: GitHub
       link: https://github.com/sroai

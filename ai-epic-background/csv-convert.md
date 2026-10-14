@@ -1,5 +1,12 @@
 # CSV Convert
 
+::: tip eic2ai
+The current converter is [eic2ai](https://github.com/sroai/eic2ai): one program reads each
+ROOT file once and writes every role, with the same rows as the macros below and the unified
+column names of [Data Format](/ai-epic-background/data-format). Select it per stage with
+`converter: eic2ai` and `eic2ai_bin:` in the campaign config.
+:::
+
 `csv_convert/` (inside the [`simulation-pipeline`](/ai-epic-background/full-sim-pipeline) submodule)
 is a set of **ROOT converter macros** that turn ePIC podio ROOT files into flat
 CSV ready for analysis or ML training. There is one macro per *role* — one kind

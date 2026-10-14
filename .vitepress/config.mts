@@ -17,7 +17,7 @@ export default defineConfig({
     themeConfig: {
         nav: [
             { text: 'Home', link: '/' },
-            { text: 'EIC AI Background', link: '/ai-epic-background/' },
+            { text: 'Data', link: '/ai-epic-background/data' },
             {
                 text: 'Projects',
                 items: [
