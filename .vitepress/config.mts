@@ -51,7 +51,7 @@ export default defineConfig({
                     text: 'Campaigns',
                     collapsed: false,
                     items: [
-                        { text: '26.04.1-stable', link: '/ai-epic-background/campaign_2026-04/' },
+                        { text: '26.04.1 (earlier)', link: '/ai-epic-background/campaign_2026-04/' },
                     ]
                 },
                 {
@@ -60,7 +60,7 @@ export default defineConfig({
                     items: [
                         { text: 'Overview', link: '/ai-epic-background/csv-convert' },
                         { text: 'Running the Converter', link: '/ai-epic-background/csv-convert-running' },
-                        { text: 'Batch on SLURM', link: '/ai-epic-background/csv-convert-snakemake' },
+                        { text: 'Batch on SLURM', link: '/ai-epic-background/csv-convert-slurm' },
                     ]
                 },
                 {

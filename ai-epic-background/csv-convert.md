@@ -1,93 +1,106 @@
 # CSV Convert
 
-::: tip eic2ai
-The current converter is [eic2ai](https://github.com/sroai/eic2ai): one program reads each
-ROOT file once and writes every role, with the same rows as the macros below and the unified
-column names of [Data Format](/ai-epic-background/data-format). Select it per stage with
-`converter: eic2ai` and `eic2ai_bin:` in the campaign config.
-:::
+[eic2ai](https://github.com/sroai/eic2ai) turns ePIC podio ROOT files into flat CSV for
+analysis and ML training. One process reads an eicrecon file (`.edm4eic.root`) and, when
+given, its paired npsim file (`.edm4hep.root`) once, and hands every event to a set of
+**writers**. Each writer produces one **role** — one kind of dump (tracker hits, calorimeter
+hits, DIS kinematics, …) — streamed into `<stem>.<role>.csv.zip`.
 
-`csv_convert/` (inside the [`simulation-pipeline`](/ai-epic-background/full-sim-pipeline) submodule)
-is a set of **ROOT converter macros** that turn ePIC podio ROOT files into flat
-CSV ready for analysis or ML training. There is one macro per *role* — one kind
-of dump (reco particles, tracker hits, DIS kinematics, …) — rather than a single
-monolithic converter.
+eic2ai lives in its own repository and is mounted as the `eic2ai/` submodule of
+[msf-simulation-pipeline](https://github.com/JeffersonLab/msf-simulation-pipeline) (see
+[Full-Sim Pipeline](/ai-epic-background/full-sim-pipeline)). Its rows are identical to those
+of the older `csv_convert/` ROOT macros, except the shared Λ decay codes; the column names
+follow one unified vocabulary, described in [Data Format](/ai-epic-background/data-format).
 
-## Naming convention
+## Roles
 
-Every converter is named by the data model it reads:
+`eic2ai --list-writers` prints every role, the inputs it needs and the collections it reads.
 
-- `edm4hep_*.cxx` — reads **edm4hep** (DD4hep / `npsim` output, sim level).
-- `edm4eic_*.cxx` — reads **edm4eic** (`EICrecon` output, reco level).
-
-The ROOT entry-point function inside each file has the **same name as the file**
-(ROOT requires this for `root file.cxx(...)`), and each converter writes
-`<input-stem>.<role>.csv`, where `<role>` is the macro name minus its
-`edm4eic_` / `edm4hep_` prefix:
-
-```
-input:  msf_9x130_0001.edm4eic.root
-macro:  edm4eic_reco_particles
-output: msf_9x130_0001.reco_particles.csv   (+ .zip)
-```
-
-## Converters
-
-| Macro | Reads | Output |
+| Role | Needs | Content |
 | --- | --- | --- |
-| `edm4eic_reco_particles.cxx` | edm4eic | reco-particle dump (one row per particle) |
-| `edm4eic_mc_particles.cxx` | edm4eic | MCParticle dump |
-| `edm4eic_trk_hits.cxx` | edm4eic | tracker hit dump (one row per hit↔MCParticle association) |
-| `edm4eic_calo_clusters.cxx` | edm4eic | calo cluster dump (one row per cluster↔MCParticle association, with `prt_origin`) |
-| `edm4eic_mc_dis.cxx` | edm4eic | DIS invariants (one row per event, from `dis_*` params) |
-| `edm4eic_reco_dis.cxx` | edm4eic | reconstructed DIS kinematics |
-| `edm4eic_mcpart_lambda.cxx` | edm4eic | Λ MC-truth |
-| `edm4eic_reco_ff_lambda.cxx` | edm4eic | Λ far-forward reco |
-| `edm4hep_acceptance_ppim.cxx` | edm4hep | p·π⁻ acceptance (writes 3 CSVs: main + `*_pimin_hits` + `*_prot_hits`) |
-| `edm4hep_acceptance_npi0.cxx` | edm4hep | n·π⁰ acceptance |
-| `edm4hep_combinatorics_ppim.cxx` | edm4hep | p·π⁻ combinatorics |
+| `trk_hits` | reco | tracker hits (one row per hit↔MCParticle association) |
+| `cal_hits` | reco + sim | calorimeter hits |
+| `calo_clusters` | reco | calorimeter clusters (one row per cluster↔MCParticle association, with `prt_origin`) |
+| `mc_dis` | reco | DIS invariants (one row per event, from `dis_*` parameters) |
+| `mc_particles` | reco | MCParticle dump |
+| `mcpart_lambda` | reco | Λ MC truth |
+| `reco_particles` | reco | reconstructed particles |
+| `reco_dis` | reco | reconstructed DIS kinematics |
+| `reco_ff_lambda` | reco | Λ far-forward reconstruction |
+| `lambda_acceptance` | reco | per-event Λ → p π⁻ acceptance |
+| `comb_candidates` | reco | p/π⁻ combinatorics candidates (+ `comb_candidates_events`) |
+| `acceptance_ppim` | sim | p π⁻ acceptance (+ `acceptance_ppim_prot_hits`, `acceptance_ppim_pimin_hits`) |
+| `acceptance_npi0` | sim | n π⁰ acceptance |
+| `combinatorics_ppim` | sim | p π⁻ combinatorics |
+| `event_index` | any | one row per event |
 
-See [Data Format](/ai-epic-background/data-format) for the exact column layout, using
-`edm4eic_trk_hits` as the worked example.
+A role with extra outputs writes them as `<stem>.<role>_<suffix>.csv.zip` next to the main
+file. Column layouts are on [Data Format](/ai-epic-background/data-format); the writer sources
+are `eic2ai/src/writer_*.hpp`.
 
-## How converters are driven
+## Outputs
 
-You never wire these macros up by hand for a campaign. A single job generator,
-`simulation_pipeline/40_csv_convert.py <stage>`, reads the stage's dataset cards
-and emits one job per input ROOT file that runs exactly the macros the config's
-`<stage>.macros` list names:
+```
+input:   msf_9x130_0001.edm4eic.root  (+ msf_9x130_0001.edm4hep.root)
+role:    trk_hits
+output:  msf_9x130_0001.trk_hits.csv.zip   one deflate ZIP64 entry msf_9x130_0001.trk_hits.csv
+```
+
+- `<stem>` is the input file name without `.eicrecon.edm4eic.root`, `.edm4eic.root`,
+  `.edm4hep.root` or `.root` — the reco file's name, or the sim file's in sim-only runs.
+- The header line is always present; a role with no rows gives a header-only file.
+- `evt` is the 0-based entry counter of the run, the same in every role of one run.
+- Outputs are written as `.tmp` and renamed when complete. A writer that fails leaves no
+  file, and the other roles of the run are complete; a file that exists is complete.
+
+## How conversions are driven
+
+For a campaign, `simulation_pipeline/40_csv_convert.py <stage>` reads the stage's dataset
+cards and emits one job per input ROOT file. With `converter: eic2ai` each job is a single
+eic2ai call for the roles whose zip is still missing:
 
 ```yaml
-csv_eicrecon:
-  macros: [edm4eic_mc_dis, edm4eic_reco_particles, edm4eic_trk_hits]
+converter: "eic2ai"
+eic2ai_bin: "/path/to/eic2ai/build-eic_xl-26.06/eic2ai"
+
+csv_phase10:
+  input:   "${eicrecon.output}"
+  pattern: "*.edm4eic.root"
+  paired:  { dir: "${npsim_background.output}", suffix: ".edm4hep.root" }
+  output:  "${base_dir}/csv-phase10/${energy}"
+  roles:   [trk_hits, cal_hits, reco_dis, event_index]
 ```
 
-`40_csv_convert.py csv_dd4hep` runs the `edm4hep_*` macros a config names;
-`40_csv_convert.py csv_eicrecon` the `edm4eic_*` ones. The script is the same for
-both — which data model is read is entirely the config's business. See
-[Running the Converter](/ai-epic-background/csv-convert-running) and the
-[Full-Sim Pipeline](/ai-epic-background/full-sim-pipeline).
+See [Running the Converter](/ai-epic-background/csv-convert-running) for building eic2ai, running
+it by hand and the full set of config keys, and
+[Batch on SLURM](/ai-epic-background/csv-convert-slurm) for the job layout on the farm.
+
+## Legacy ROOT macros
+
+`csv_convert/` in the pipeline repository still holds one ROOT macro per role
+(`edm4eic_<role>.cxx` reads edm4eic, `edm4hep_<role>.cxx` reads edm4hep). They write the
+macro-era column names; `eic2ai/column_renames.py` maps those to the unified ones. A stage
+runs them with `converter: macros` (the default when no `converter` key is set). A macro
+retires once its eic2ai writer passes the parity test against it; until then both converters
+stay and the config selects one.
 
 ## Pipeline
 
-![.edm4eic.root / .edm4hep.root files → edm4*_*.cxx converter macros → .csv files → Python plots and AI/ML training](/diagrams/csv-convert-flow.svg)
+![.edm4eic.root and paired .edm4hep.root → eic2ai or csv_convert macros → <stem>.<role>.csv.zip → Python analysis and AI/ML training](/diagrams/csv-convert-flow.svg)
 
-## Why this design?
+## Why CSV
 
-We use the **edm4eic** and **edm4hep** C++ libraries to read ePIC simulation data
-because they provide convenient navigation between linked objects (hits →
-particles → vertices) through PODIO relations.
+eic2ai reads ePIC data through the **podio**, **EDM4HEP** and **EDM4EIC** C++ libraries,
+which provide navigation between linked objects (hits → particles → vertices) through podio
+relations. The output is CSV because it is:
 
-We store the extracted data as **CSV** because:
-
-1. **Easy to produce in C++** — just format and write lines, no extra dependencies.
-2. **Easy to plot with Python** — `pandas.read_csv()` + matplotlib, especially convenient
-   when an LLM is generating the plot code.
-3. **Easy for AI / ML** — CSV loads directly into numpy, pandas, and PyTorch datasets.
-4. **Easy for students** — no special libraries needed to inspect or work with the data.
+1. **Easy to produce in C++** — format and write lines.
+2. **Easy to plot with Python** — `pandas.read_csv()` reads the zip directly.
+3. **Easy for AI / ML** — CSV loads into numpy, pandas and PyTorch datasets.
+4. **Easy for students** — no special libraries needed to inspect the data.
 
 ## Continue reading
 
-- [Running the Converter](/ai-epic-background/csv-convert-running) — run one macro by hand, or generate jobs for a whole campaign.
-- [Batch on SLURM](/ai-epic-background/csv-convert-snakemake) — how CSV jobs are queued as SLURM arrays.
-- [Data Format](/ai-epic-background/data-format) — exact column layout of the CSV.
+- [Running the Converter](/ai-epic-background/csv-convert-running) — build eic2ai, run it on one file, generate jobs for a campaign.
+- [Batch on SLURM](/ai-epic-background/csv-convert-slurm) — job layout, submission, node-local staging, farm settings.
+- [Data Format](/ai-epic-background/data-format) — column layout of every role.

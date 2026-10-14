@@ -4,7 +4,8 @@ CSV files are written by [eic2ai](https://github.com/sroai/eic2ai), a single-pas
 C++ converter that reads an eicrecon file (`.edm4eic.root`) and, when a role needs
 it, the paired npsim file (`.edm4hep.root`) once, and writes one CSV per **role**.
 The rows are identical to those of the older `csv_convert/` ROOT macros (except
-the shared Λ decay codes); the column names follow one shared vocabulary (below).
+the shared Λ decay codes and the added `truth_*` block of `reco_dis`); the column
+names follow one shared vocabulary (below).
 
 `eic2ai --list-columns` prints the header of every role, `eic2ai --list-writers`
 the collections each role reads. The tables on this page follow the writer
@@ -18,7 +19,8 @@ sources in `eic2ai/src/writer_*.hpp`.
 <stem>.<role>.csv.gz      --compress gz
 ```
 
-`<stem>` is the reco file name without `.edm4eic.root`, so
+`<stem>` is the reco file name without `.eicrecon.edm4eic.root` or `.edm4eic.root`
+(the sim file name without `.edm4hep.root` in sim-only runs), so
 `k_lambda_18x275_5000evt_0022.edm4eic.root` gives
 `k_lambda_18x275_5000evt_0022.trk_hits.csv.zip`. pandas reads the zip directly.
 
@@ -50,8 +52,9 @@ Units: GeV, GeV/c, mm, ns, rad, charge in e.
 | `3` | background particle from the generator |
 | `4` | Geant4 secondary of a background particle |
 
-The background merger adds `1000` to the generator status of background
-particles before Geant4 runs. Generator particles are classified by
+The background merger adds a source-specific offset (a multiple of 1000, see
+[Backgrounds](/ai-epic-background/background)) to the generator status of
+background particles before Geant4 runs. Generator particles are classified by
 `prt_gen_status` (`1` or `2` signal, `>= 1000` background); Geant4 secondaries
 (`prt_gen_status = 0`) take the class of their first generator ancestor up the
 parent chain.
@@ -76,15 +79,16 @@ analyses; their columns are listed by `eic2ai --list-columns`.
 ## `trk_hits` {#trk-hits}
 
 One row per tracker hit association (raw hit → sim hit → MC particle), joined
-with the reconstructed hit. Hits from every ePIC tracker:
+with the reconstructed hit. Hits from these association collections:
 
 ```
-B0TrackerRawHitAssociations            MPGDBarrelRawHitAssociations
-BackwardMPGDEndcapRawHitAssociations   OuterMPGDBarrelRawHitAssociations
+B0TrackerRawHitAssociations            OuterMPGDBarrelRawHitAssociations
+BackwardMPGDEndcapRawHitAssociations   RICHEndcapNRawHitsAssociations
 ForwardMPGDEndcapRawHitAssociations    SiBarrelRawHitAssociations
 ForwardOffMTrackerRawHitAssociations   SiBarrelVertexRawHitAssociations
 ForwardRomanPotRawHitAssociations      SiEndcapTrackerRawHitAssociations
-TOFBarrelRawHitAssociations            TOFEndcapRawHitAssociations
+MPGDBarrelRawHitAssociations           TOFBarrelRawHitAssociations
+TOFEndcapRawHitAssociations
 ```
 
 | Column | Type | Unit | Description |
@@ -104,7 +108,7 @@ TOFBarrelRawHitAssociations            TOFEndcapRawHitAssociations
 | `prt_end_pos_x/y/z` | float | mm | endpoint |
 | `trk_hit_cell_id` | uint64 | | full cellID of the reconstructed hit |
 | `trk_hit_system_id` | uint64 | | detector system id (bits 0–7 of the cellID) |
-| `trk_hit_system_name` | string | | detector name, e.g. `SiBarrelVertex` |
+| `trk_hit_system_name` | string | | detector name, e.g. `VertexBarrel_0` (`Unknown` for ids outside the table) |
 | `trk_hit_pos_x/y/z` | float | mm | reconstructed hit position |
 | `trk_hit_time` | float | ns | reconstructed hit time |
 | `trk_hit_pos_err_xx/yy/zz` | float | mm² | position variances |
@@ -143,7 +147,7 @@ Calorimeters: `EcalBarrelScFiRecHits`, `EcalBarrelImagingRecHits`,
 | `sim_time` | float | ns | earliest contribution time |
 | `n_contrib` | int32 | | contributions in the cell |
 | `label_purity` | float | | energy fraction of the majority origin class |
-| `prt_index` | uint64 | | representative particle in `MCParticles` |
+| `prt_index` | uint64 | | representative particle in the sim file's `MCParticles` |
 | `prt_pdg`, `prt_gen_status`, `prt_origin` | int32 | | as in `trk_hits` |
 | `prt_energy` | double | GeV | total energy |
 | `prt_charge` | float | e | electric charge |
@@ -157,9 +161,10 @@ The `cal_hit_*` columns are the detector-level features; `sim_*`, `n_contrib`,
 
 ## `calo_clusters` {#calo-clusters}
 
-One row per cluster ↔ MC particle association, from every `*ClusterAssociations`
-collection of the reco file (regular, truth and split-merge clusters of the
-ECAL, HCAL, B0, ZDC and luminosity calorimeters).
+One row per cluster ↔ MC particle association, from a fixed list of 27
+`*ClusterAssociations` collections (regular, truth and split-merge clusters of the
+ECAL, HCAL, B0, ZDC and luminosity calorimeters); collections absent from a file
+are skipped.
 
 | Column | Type | Unit | Description |
 | ------ | ---- | ---- | ----------- |

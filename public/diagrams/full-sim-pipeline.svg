@@ -1,32 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2130 360" role="img" aria-label="Full simulation pipeline stages" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1710.0 330" role="img" aria-label="Full simulation pipeline stages" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">
   <defs>
     <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 z" fill="#8a98a8"/>
     </marker>
   </defs>
-  <line x1="190" y1="150" x2="340" y2="150" stroke="#8a98a8" stroke-width="1.7" marker-end="url(#ah)"/>
-  <line x1="510" y1="150" x2="660" y2="150" stroke="#8a98a8" stroke-width="1.7" marker-end="url(#ah)"/>
-  <line x1="830" y1="150" x2="980" y2="80" stroke="#8a98a8" stroke-width="1.7" marker-end="url(#ah)"/>
-  <line x1="830" y1="150" x2="980" y2="300" stroke="#8a98a8" stroke-width="1.7" marker-end="url(#ah)"/>
-  <line x1="1150" y1="80" x2="1300" y2="80" stroke="#8a98a8" stroke-width="1.7" marker-end="url(#ah)"/>
-  <line x1="1150" y1="80" x2="1300" y2="220" stroke="#8a98a8" stroke-width="1.7" marker-end="url(#ah)"/>
-  <line x1="1470" y1="80" x2="1620" y2="80" stroke="#8a98a8" stroke-width="1.7" marker-end="url(#ah)"/>
-  <line x1="1470" y1="220" x2="1940" y2="150" stroke="#8a98a8" stroke-width="1.7" marker-end="url(#ah)"/>
-  <line x1="1790" y1="80" x2="1940" y2="150" stroke="#8a98a8" stroke-width="1.7" marker-end="url(#ah)"/>
-  <rect x="20" y="125.0" width="170" height="50" rx="7" fill="#eaf1fb" stroke="#3b6fb0" stroke-width="1.5"/><text x="105" y="150" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d">HEPMC events</text>
-  <rect x="340" y="125.0" width="170" height="50" rx="7" fill="#eaf1fb" stroke="#3b6fb0" stroke-width="1.5"/><text x="425" y="150" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d">normalised HEPMC</text>
-  <rect x="660" y="125.0" width="170" height="50" rx="7" fill="#eaf1fb" stroke="#3b6fb0" stroke-width="1.5"/><text x="745" y="150" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d">afterburner ROOT</text>
-  <rect x="980" y="55.0" width="170" height="50" rx="7" fill="#eaf1fb" stroke="#3b6fb0" stroke-width="1.5"/><text x="1065" y="80" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d">edm4hep .root</text>
-  <rect x="980" y="275.0" width="170" height="50" rx="7" fill="#eaf1fb" stroke="#3b6fb0" stroke-width="1.5"/><text x="1065" y="300" text-anchor="middle" dominant-baseline="central" font-size="13" fill="#1f2d3d"><tspan x="1065" dy="-7">edm4hep .root</tspan><tspan x="1065" dy="14">(all hits)</tspan></text>
-  <rect x="1300" y="55.0" width="170" height="50" rx="7" fill="#eaf1fb" stroke="#3b6fb0" stroke-width="1.5"/><text x="1385" y="80" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d">edm4eic .root</text>
-  <rect x="1300" y="195.0" width="170" height="50" rx="7" fill="#eaf1fb" stroke="#3b6fb0" stroke-width="1.5"/><text x="1385" y="220" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d">dd4hep CSV</text>
-  <rect x="1620" y="55.0" width="170" height="50" rx="7" fill="#eaf1fb" stroke="#3b6fb0" stroke-width="1.5"/><text x="1705" y="80" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d">eicrecon CSV</text>
-  <rect x="1940" y="125.0" width="170" height="50" rx="7" fill="#eaf1fb" stroke="#3b6fb0" stroke-width="1.5"/><text x="2025" y="150" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d">analysis (50/51)</text>
-  <rect x="213" y="134" width="103" height="32" rx="4" fill="#eef2f7" stroke="#d7dfe8" stroke-width="1"/><text x="265" y="143" text-anchor="middle" dominant-baseline="central" font-size="11" fill="#51606f"><tspan x="265" dy="0">01/02 convert</tspan><tspan x="265" dy="14">ROOT/HEPMC</tspan></text>
-  <rect x="530" y="141" width="110" height="18" rx="4" fill="#eef2f7" stroke="#d7dfe8" stroke-width="1"/><text x="585" y="150" text-anchor="middle" dominant-baseline="central" font-size="11" fill="#51606f"><tspan x="585" dy="0">10 afterburner</tspan></text>
-  <rect x="870" y="106" width="70" height="18" rx="4" fill="#eef2f7" stroke="#d7dfe8" stroke-width="1"/><text x="905" y="115" text-anchor="middle" dominant-baseline="central" font-size="11" fill="#51606f"><tspan x="905" dy="0">20 npsim</tspan></text>
-  <rect x="843" y="216" width="123" height="18" rx="4" fill="#eef2f7" stroke="#d7dfe8" stroke-width="1"/><text x="905" y="225" text-anchor="middle" dominant-baseline="central" font-size="11" fill="#51606f"><tspan x="905" dy="0">21 npsim saveall</tspan></text>
-  <rect x="1180" y="71" width="90" height="18" rx="4" fill="#eef2f7" stroke="#d7dfe8" stroke-width="1"/><text x="1225" y="80" text-anchor="middle" dominant-baseline="central" font-size="11" fill="#51606f"><tspan x="1225" dy="0">30 EICrecon</tspan></text>
-  <rect x="1173" y="141" width="103" height="18" rx="4" fill="#eef2f7" stroke="#d7dfe8" stroke-width="1"/><text x="1225" y="150" text-anchor="middle" dominant-baseline="central" font-size="11" fill="#51606f"><tspan x="1225" dy="0">40 dd4hep CSV</tspan></text>
-  <rect x="1487" y="71" width="116" height="18" rx="4" fill="#eef2f7" stroke="#d7dfe8" stroke-width="1"/><text x="1545" y="80" text-anchor="middle" dominant-baseline="central" font-size="11" fill="#51606f"><tspan x="1545" dy="0">41 eicrecon CSV</tspan></text>
+  <line x1="190.0" y1="150" x2="270.0" y2="150" stroke="#8a98a8" stroke-width="1.7" marker-end="url(#ah)"/>
+  <line x1="440.0" y1="150" x2="520.0" y2="150" stroke="#8a98a8" stroke-width="1.7" marker-end="url(#ah)"/>
+  <line x1="690.0" y1="150" x2="770.0" y2="60" stroke="#8a98a8" stroke-width="1.7" marker-end="url(#ah)"/>
+  <line x1="690.0" y1="150" x2="1020.0" y2="150" stroke="#8a98a8" stroke-width="1.7" marker-end="url(#ah)"/>
+  <line x1="940.0" y1="60" x2="1020.0" y2="150" stroke="#8a98a8" stroke-width="1.7" marker-end="url(#ah)"/>
+  <line x1="1190.0" y1="150" x2="1270.0" y2="150" stroke="#8a98a8" stroke-width="1.7" marker-end="url(#ah)"/>
+  <line x1="1440.0" y1="150" x2="1520.0" y2="150" stroke="#8a98a8" stroke-width="1.7" marker-end="url(#ah)"/>
+  <path d="M1105 175.0 C 1105 260, 1605 260, 1605 175.0" fill="none" stroke="#8a98a8" stroke-width="1.7" stroke-dasharray="5 4" marker-end="url(#ah)"/>
+  <rect x="20.0" y="125.0" width="170" height="50" rx="7" fill="#eaf1fb" stroke="#3b6fb0" stroke-width="1.5"/><text x="105" y="142" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d"><tspan x="105" dy="0">generator ROOT</tspan><tspan x="105" dy="16" font-size="12" fill="#51606f">01 / 02 convert</tspan></text>
+  <rect x="270.0" y="125.0" width="170" height="50" rx="7" fill="#eaf1fb" stroke="#3b6fb0" stroke-width="1.5"/><text x="355" y="142" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d"><tspan x="355" dy="0">*.hepmc</tspan><tspan x="355" dy="16" font-size="12" fill="#51606f">10 afterburner</tspan></text>
+  <rect x="520.0" y="125.0" width="170" height="50" rx="7" fill="#eaf1fb" stroke="#3b6fb0" stroke-width="1.5"/><text x="605" y="150" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d">*.hepmc3.tree.root</text>
+  <rect x="770.0" y="35.0" width="170" height="50" rx="7" fill="#fdf1e3" stroke="#c27a1f" stroke-width="1.5"/><text x="855" y="52" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d"><tspan x="855" dy="0">11 bg_merger</tspan><tspan x="855" dy="16" font-size="12" fill="#51606f">SignalBackgroundMerger</tspan></text>
+  <rect x="1020.0" y="125.0" width="170" height="50" rx="7" fill="#eaf1fb" stroke="#3b6fb0" stroke-width="1.5"/><text x="1105" y="142" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d"><tspan x="1105" dy="0">*.edm4hep.root</tspan><tspan x="1105" dy="16" font-size="12" fill="#51606f">20 / 21 / 22 npsim</tspan></text>
+  <rect x="1270.0" y="125.0" width="170" height="50" rx="7" fill="#eaf1fb" stroke="#3b6fb0" stroke-width="1.5"/><text x="1355" y="142" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d"><tspan x="1355" dy="0">*.edm4eic.root</tspan><tspan x="1355" dy="16" font-size="12" fill="#51606f">30 eicrecon</tspan></text>
+  <rect x="1520.0" y="125.0" width="170" height="50" rx="7" fill="#eaf1fb" stroke="#3b6fb0" stroke-width="1.5"/><text x="1605" y="142" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d"><tspan x="1605" dy="0">&lt;stem&gt;.&lt;role&gt;.csv.zip</tspan><tspan x="1605" dy="16" font-size="12" fill="#51606f">40 csv (eic2ai / macros)</tspan></text>
+  <rect x="1258.1" y="251" width="193.79999999999998" height="22" rx="4" fill="#eef2f7" stroke="#d7dfe8" stroke-width="1"/><text x="1355.0" y="262" text-anchor="middle" dominant-baseline="central" font-size="11" fill="#51606f">sim file paired for cal_hits</text>
+  <rect x="20.0" y="265.0" width="170" height="50" rx="7" fill="#eaf1fb" stroke="#3b6fb0" stroke-width="1.5"/><text x="105" y="282" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d"><tspan x="105" dy="0">EMCal profiles</tspan><tspan x="105" dy="16" font-size="12" fill="#51606f">90 calsim → .npz</tspan></text>
+  <rect x="741.6" y="7" width="226.79999999999998" height="22" rx="4" fill="#eef2f7" stroke="#d7dfe8" stroke-width="1"/><text x="855" y="18" text-anchor="middle" dominant-baseline="central" font-size="11" fill="#51606f">2 µs frames + background cocktail</text>
 </svg>

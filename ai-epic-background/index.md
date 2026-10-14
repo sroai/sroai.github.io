@@ -1,90 +1,69 @@
 # EIC AI Background
 
-Full-simulation pipelines and CSV-based machine-learning datasets for the
-ePIC detector at the Electron-Ion Collider.
+Full-simulation pipeline, background mixing and CSV datasets for machine learning with
+the ePIC detector at the Electron-Ion Collider.
 
-## What is this project?
+## Scope
 
-This site documents the **EIC AI Background** project — a set of tools for producing
-and consuming background-rich datasets from full ePIC detector simulations, with a focus
-on use cases for AI / ML training and physics studies of detector occupancy.
-
-The work has three pillars:
+The project produces background-mixed ePIC simulations and converts them to flat CSV for
+ML training and detector-occupancy studies. It has three parts:
 
 1. **Simulation pipeline** —
-   [JeffersonLab/msf-simulation-pipeline](https://github.com/JeffersonLab/msf-simulation-pipeline),
-   orchestration scripts that drive the ePIC simulation chain (`afterburner` → `npsim` →
-   `EICrecon`) on the JLab farm and produce reconstructed `edm4eic` ROOT files for one or
-   more beam-energy campaigns.
-2. **CSV conversion** — [sroai/eic2ai](https://github.com/sroai/eic2ai), a single-pass
-   C++ program that reads each ROOT file once and writes every CSV role (tracker hits,
-   reco particles, DIS kinematics, …), each row carrying the linked `MCParticle` truth.
-   It replaces the per-role ROOT macros in the pipeline's `csv_convert/`, with identical
-   output; `40_csv_convert.py` drives either one.
-3. **Analyses** — standalone Python analyses on the produced CSVs, kept in the archived
+   [JeffersonLab/msf-simulation-pipeline](https://github.com/JeffersonLab/msf-simulation-pipeline).
+   Python scripts that generate SLURM job arrays for each stage of the ePIC chain
+   (afterburner `abconv` → optional signal + background merge → `npsim` → `EICrecon` → CSV)
+   on the JLab farm. Stages from the afterburner onward read dataset cards: YAML file lists
+   made from a farm directory or, for official campaigns, from Rucio. One self-contained YAML config per
+   campaign sets inputs, outputs, container image and converter roles.
+2. **CSV conversion** — [sroai/eic2ai](https://github.com/sroai/eic2ai), a single-pass C++
+   program (submodule of the pipeline). It reads each input once — the `.edm4eic.root` file
+   and, for roles that need simulation hits, its paired `.edm4hep.root` — and writes every
+   requested role
+   (tracker hits, calorimeter hits, reco particles, DIS kinematics, …) as
+   `<stem>.<role>.csv.zip`. It supersedes the per-role ROOT macros in the pipeline's
+   `csv_convert/`: same rows, unified column names. `40_csv_convert.py` runs either one;
+   a config selects eic2ai with `converter: eic2ai`, and the macros stay the default
+   otherwise.
+3. **Analyses** — earlier Python analyses on the CSVs, kept in the archived
    [eic/ai-epic-background](https://github.com/eic/ai-epic-background/tree/main/analyses)
    repository.
 
-The CSV output is deliberately simple so it can be consumed by Python, by LLM-generated
-plotting scripts, or fed directly into a `torch.utils.data.Dataset` for ML training.
-
-## Quick links
-
-- [Full-Sim Pipeline overview](/ai-epic-background/full-sim-pipeline) — end-to-end ePIC simulation chain
-  runnable on JLab SLURM with reproducible per-campaign configs.
-- [Backgrounds](/ai-epic-background/background) — how signal events get mixed with the official ePIC
-  background cocktails into 2 µs timeframes, with all the flags and references.
-- [CSV Convert](/ai-epic-background/csv-convert) — lightweight C++/ROOT converter that turns edm4eic ROOT
-  files into flat CSV with full hit, particle, and detector context.
-- [AI / ML datasets](/ai-epic-background/ai-datasets) — tracker hits, MC truth, and detector tags packed
-  into CSVs that load directly into pandas, numpy, or PyTorch dataloaders.
-- [Available datasets](/ai-epic-background/data) — current background-mixed datasets on Rucio.
-- [Data format](/ai-epic-background/data-format) — exact column layout produced by the converter.
-
 ## Pipeline at a glance
 
-![HEPMC events → afterburner ROOT → edm4hep → edm4eic → CSV hits → AI/ML training and Python analysis](/diagrams/pipeline-overview.svg)
+```
+generator HepMC
+  → abconv (afterburner)        *.hepmc3.tree.root       stage 10
+  → SignalBackgroundMerger      *.bg.hepmc3.tree.root    stage 11 (background campaigns)
+  → npsim                       *.edm4hep.root           stage 20 / 22
+  → EICrecon                    *.edm4eic.root           stage 30
+  → eic2ai or csv_convert       <stem>.<role>.csv(.zip)  40_csv_convert.py
+```
 
-For the background-mixing step that sits between afterburner and `npsim`, see the
-[Backgrounds](/ai-epic-background/background) page.
+Stage 11 mixes each signal event with the official ePIC background cocktails
+(synchrotron radiation; electron-beam bremsstrahlung, Coulomb and Touschek; proton beam
+gas) into a 2 µs timeframe with the
+`SignalBackgroundMerger` binary from [eic/HEPMC_Merger](https://github.com/eic/HEPMC_Merger).
+EIC has since moved timeframe building to [eic/TimeframeBuilder](https://github.com/eic/TimeframeBuilder);
+the pipeline has not switched. Details on the [Backgrounds](/ai-epic-background/background) page.
 
-## Why CSV?
+## Pages
 
-Tracker-hit CSVs are dead simple to produce in C++ (no extra dependencies beyond
-`fmt::format`) and trivial to load anywhere downstream:
+- [Full-Sim Pipeline](/ai-epic-background/full-sim-pipeline) — stages, job creator and
+  campaign configs.
+- [Backgrounds](/ai-epic-background/background) — the merge step, cocktails and
+  generator-status offsets.
+- [CSV Convert](/ai-epic-background/csv-convert) — eic2ai and the ROOT macros, roles and
+  how to run them.
+- [Data Format](/ai-epic-background/data-format) — column layout of every CSV role.
+- [Available Datasets](/ai-epic-background/data) — background-mixed datasets on Rucio.
+- [AI / ML Datasets](/ai-epic-background/ai-datasets) — loading the CSVs in pandas, numpy
+  and PyTorch.
 
-- `pandas.read_csv()` for exploration and plotting
-- `numpy.loadtxt` / `pyarrow` for bulk numeric work
-- A few lines of Python for `torch.utils.data.Dataset`
-- LLM-generated analysis scripts, which work much more reliably on flat CSV than on
-  EDM4EIC's PODIO graph
-
-See the [Data Format](/ai-epic-background/data-format) page for the exact column layout produced by the
-converter.
-
-## Reproducibility
-
-The entire chain is reproducible by design:
-
-- Pinned `eic_xl` Singularity containers — every job runs in the same image.
-- SLURM job arrays for every stage, including CSV conversion.
-- One self-contained YAML campaign config per release, checked into the repo.
-
-So any run can be re-executed at any time, against the exact container and detector
-release it was originally produced with.
-
-## Where the code lives
+## Repositories
 
 | What | Repository |
 | ---- | ---------- |
-| Simulation pipeline, campaign configs, CSV macros | [JeffersonLab/msf-simulation-pipeline](https://github.com/JeffersonLab/msf-simulation-pipeline) |
+| Simulation pipeline, campaign configs, background cocktails, ROOT macros | [JeffersonLab/msf-simulation-pipeline](https://github.com/JeffersonLab/msf-simulation-pipeline) |
 | `eic2ai` converter (submodule of the pipeline) | [sroai/eic2ai](https://github.com/sroai/eic2ai) |
 | This website | [sroai/sroai.github.io](https://github.com/sroai/sroai.github.io) |
-| Earlier analyses (archived) | [eic/ai-epic-background](https://github.com/eic/ai-epic-background) |
-
-## Where to start
-
-- New here? Start with the [Full-Sim Pipeline overview](/ai-epic-background/full-sim-pipeline).
-- Want to know how backgrounds are mixed? Go to [Backgrounds](/ai-epic-background/background).
-- Looking for the data itself? See [Available datasets](/ai-epic-background/data).
-- Just want flat CSV out of an existing ROOT file? Jump to [CSV Convert](/ai-epic-background/csv-convert).
+| Earlier analyses and documentation (archived) | [eic/ai-epic-background](https://github.com/eic/ai-epic-background) |

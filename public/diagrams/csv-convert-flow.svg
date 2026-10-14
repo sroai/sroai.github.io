@@ -1,17 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1170 240" role="img" aria-label="CSV converter flow" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1125 240" role="img" aria-label="CSV conversion flow" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">
   <defs>
     <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 z" fill="#8a98a8"/>
     </marker>
   </defs>
-  <line x1="190" y1="120" x2="380" y2="120" stroke="#8a98a8" stroke-width="1.7" marker-end="url(#ah)"/>
-  <line x1="550" y1="120" x2="680" y2="120" stroke="#8a98a8" stroke-width="1.7" marker-end="url(#ah)"/>
-  <line x1="850" y1="120" x2="980" y2="50" stroke="#8a98a8" stroke-width="1.7" marker-end="url(#ah)"/>
-  <line x1="850" y1="120" x2="980" y2="190" stroke="#8a98a8" stroke-width="1.7" marker-end="url(#ah)"/>
-  <rect x="20" y="95.0" width="170" height="50" rx="7" fill="#eaf1fb" stroke="#3b6fb0" stroke-width="1.5"/><text x="105" y="120" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d">.edm4eic.root files</text>
-  <rect x="380" y="95.0" width="170" height="50" rx="7" fill="#eaf1fb" stroke="#3b6fb0" stroke-width="1.5"/><text x="465" y="120" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d">edm4*_*.cxx macros</text>
-  <rect x="680" y="95.0" width="170" height="50" rx="7" fill="#eaf1fb" stroke="#3b6fb0" stroke-width="1.5"/><text x="765" y="120" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d">.csv files</text>
-  <rect x="980" y="25.0" width="170" height="50" rx="7" fill="#eaf1fb" stroke="#3b6fb0" stroke-width="1.5"/><text x="1065" y="50" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d">Python plots</text>
-  <rect x="980" y="165.0" width="170" height="50" rx="7" fill="#eaf1fb" stroke="#3b6fb0" stroke-width="1.5"/><text x="1065" y="190" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d">AI/ML training</text>
-  <rect x="233" y="104" width="103" height="32" rx="4" fill="#eef2f7" stroke="#d7dfe8" stroke-width="1"/><text x="285" y="113" text-anchor="middle" dominant-baseline="central" font-size="11" fill="#51606f"><tspan x="285" dy="0">root macro or</tspan><tspan x="285" dy="14">cmake build</tspan></text>
+  <line x1="190.0" y1="60" x2="335.0" y2="120" stroke="#8a98a8" stroke-width="1.7" marker-end="url(#ah)"/>
+  <line x1="190.0" y1="180" x2="335.0" y2="120" stroke="#8a98a8" stroke-width="1.7" marker-end="url(#ah)"/>
+  <line x1="505.0" y1="120" x2="635.0" y2="120" stroke="#8a98a8" stroke-width="1.7" marker-end="url(#ah)"/>
+  <line x1="805.0" y1="120" x2="935.0" y2="60" stroke="#8a98a8" stroke-width="1.7" marker-end="url(#ah)"/>
+  <line x1="805.0" y1="120" x2="935.0" y2="180" stroke="#8a98a8" stroke-width="1.7" marker-end="url(#ah)"/>
+  <rect x="20.0" y="35.0" width="170" height="50" rx="7" fill="#eaf1fb" stroke="#3b6fb0" stroke-width="1.5"/><text x="105" y="52" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d"><tspan x="105" dy="0">.edm4eic.root</tspan><tspan x="105" dy="16" font-size="12" fill="#51606f">eicrecon output</tspan></text>
+  <rect x="20.0" y="155.0" width="170" height="50" rx="7" fill="#eaf1fb" stroke="#3b6fb0" stroke-width="1.5"/><text x="105" y="172" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d"><tspan x="105" dy="0">.edm4hep.root</tspan><tspan x="105" dy="16" font-size="12" fill="#51606f">npsim output (paired)</tspan></text>
+  <rect x="335.0" y="95.0" width="170" height="50" rx="7" fill="#fdf1e3" stroke="#c27a1f" stroke-width="1.5"/><text x="420" y="112" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d"><tspan x="420" dy="0">eic2ai</tspan><tspan x="420" dy="16" font-size="12" fill="#51606f">or csv_convert macros</tspan></text>
+  <rect x="635.0" y="95.0" width="170" height="50" rx="7" fill="#eaf1fb" stroke="#3b6fb0" stroke-width="1.5"/><text x="720" y="112" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d"><tspan x="720" dy="0">&lt;stem&gt;.&lt;role&gt;.csv.zip</tspan><tspan x="720" dy="16" font-size="12" fill="#51606f">one file per role</tspan></text>
+  <rect x="935.0" y="35.0" width="170" height="50" rx="7" fill="#eaf1fb" stroke="#3b6fb0" stroke-width="1.5"/><text x="1020" y="60" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d">Python analysis</text>
+  <rect x="935.0" y="155.0" width="170" height="50" rx="7" fill="#eaf1fb" stroke="#3b6fb0" stroke-width="1.5"/><text x="1020" y="180" text-anchor="middle" dominant-baseline="central" font-size="14" fill="#1f2d3d">AI/ML training</text>
+  <rect x="209.4" y="109" width="121.19999999999999" height="22" rx="4" fill="#eef2f7" stroke="#d7dfe8" stroke-width="1"/><text x="270" y="120" text-anchor="middle" dominant-baseline="central" font-size="11" fill="#51606f">40_csv_convert.py</text>
 </svg>

@@ -26,6 +26,12 @@ _Last updated: **2026-09-29**_
 - Use the per-row 📋 to copy a single DID, the **Copy all** button to copy
   every DID in a strip (newline-separated), or click the prefix line to copy
   the shared DID prefix.
+- A strip's CSV path points to our converted CSVs. Files written by
+  [eic2ai](https://github.com/sroai/eic2ai) use the column names on
+  [Data Format](/ai-epic-background/data-format); files written earlier by the
+  `csv_convert/` ROOT macros use the older names (`prt_status`, `event`, …),
+  which `rename_dataframe(df, role)` from `eic2ai/column_renames.py` maps to the
+  current ones.
 
 <!-- BEGIN STRIPS -->
 
@@ -84,7 +90,7 @@ epic:/RECO/26.07.1/epic_craterlake/Bkg_Exact1S_2us/GoldCt/10um/SIDIS/pythia6-eic
 </DidStrips>
 
 Adds a **SIDIS** branch (pythia6-eic 1.0.0, `q2_0to1`) alongside the DIS/NC
-grid, and every dataset now has both a **FULL** (sim) and a **RECO** partition.
+grid. Every dataset has both a **FULL** (sim) and a **RECO** partition.
 
 
 ## Campaign 26.07.0
@@ -133,6 +139,15 @@ epic:/RECO/26.07.0/epic_craterlake/Bkg_Exact1S_2us/GoldCt/10um/DIS/NC/10x275/min
   </Dids>
 </DidStrips>
 
+Converted for the event-type classifier (simulation-pipeline
+`configs/config-phase12-disnc.yaml`): DIS/NC 10x100, minQ2 = 1, 10, 100, FULL +
+RECO file pairs, 99 frames per file, eic2ai roles `trk_hits`, `cal_hits`,
+`reco_dis`, `event_index`; output in
+`/work/eic3/users/romanov/disnc-2026-07-background/csv-2026-09-phase12/10x100_minQ2_<N>/`.
+The files were staged from tape into `/cache`. They
+carry edm4eic schema 81000 and need the `eic_xl:26.07.0-stable` container — a
+26.06 container reads them with the collections silently missing.
+
 
 ## Campaign 2026-06
 
@@ -171,7 +186,16 @@ epic:/RECO/26.07.0/epic_craterlake/Bkg_Exact1S_2us/GoldCt/10um/DIS/NC/10x275/min
 k-Λ signal reconstructed with background + beam effects — not on Rucio, on the
 JLab work disk (XRootD via `root://dtn-eic.jlab.org`). One leaf per beam energy
 of `k_lambda_<beam>_5000evt_*.edm4eic.root`; file counts are in the beam-energy
-tooltips above.
+tooltips above. The matching simulation files are in `dd4hep-background/<beam>`
+next to `reco-background/`.
+
+CSVs (simulation-pipeline configs, all under
+`/work/eic3/users/romanov/meson-structure-2026-06/`):
+
+| Directory | Config | Converter, roles |
+| --- | --- | --- |
+| `csv-2026-09-background/<beam>` | `config-msf-26-06-background.yaml` | macros: `mc_dis`, `mcpart_lambda`, `reco_particles`, `calo_clusters`, `trk_hits`, `cal_hits` |
+| `csv-2026-09-bkg-phase10/<beam>` | `config-phase10-cal.yaml`, `config-phase10-cal-18x275.yaml` | eic2ai: `trk_hits`, `cal_hits`, `reco_dis`, `event_index`; 10x130 (8 files), 10x100, 18x275 (all 107 files) |
 
 
 ## Campaign 26.05.0
@@ -452,22 +476,21 @@ folder is a self-contained subtree (DIS/NC + DVCS_ABCONV) mixed with
 
 ## Using these DIDs
 
-A DID is just a pointer — it resolves to a set of files (PFNs) on Rucio
-Storage Elements. Two upstream pages cover this in full; this section is
-the bare minimum to get you started.
+A DID resolves to a set of files (PFNs) on Rucio Storage Elements. The EIC
+file-access tutorial covers this in full; this section is the minimum.
 
-- 📚 [Rucio usage tutorial](https://eic.github.io/tutorial-file-access/02-rucio_usage/index.html) — setup, auth, full command reference.
-- 📚 [Use-cases tutorial](https://eic.github.io/tutorial-file-access/03-use_cases/index.html) — download vs. stream, batch workflows, common patterns.
+- 📚 [Rucio usage tutorial](https://eic.github.io/tutorial-file-access/02-rucio_usage.html) — setup, metadata filters, command reference.
+- 📚 [Use-cases tutorial](https://eic.github.io/tutorial-file-access/03-use_cases.html) — download vs. stream, batch workflows, common patterns.
 
-### 1. One-time setup (inside `eic-shell`)
+### 1. Check the client (inside `eic-shell`)
 
 ```bash
-# Voms / OIDC auth — pick what matches your account (see Rucio tutorial).
 rucio whoami
 ```
 
-If `rucio whoami` returns your identity, you're done. If not, follow the
-auth steps on the [Rucio usage tutorial](https://eic.github.io/tutorial-file-access/02-rucio_usage/index.html).
+The Rucio client in `eic-shell` comes configured; `rucio whoami` prints the
+identity it uses. If it fails, follow the setup on the
+[Rucio usage tutorial](https://eic.github.io/tutorial-file-access/02-rucio_usage.html).
 
 ### 2. See what's inside a dataset
 
@@ -475,11 +498,14 @@ auth steps on the [Rucio usage tutorial](https://eic.github.io/tutorial-file-acc
 rucio did content list 'epic:/RECO/26.04.1/epic_craterlake/Bkg_Exact1S_2us/GoldCt/10um/DIS/NC/10x100/minQ2=1'
 ```
 
-Get list of files to 
+List the XRootD URLs of its files:
 
 ```bash
 rucio replica list file --protocols root --pfns --rses isopenaccess 'epic:/RECO/26.04.1/epic_craterlake/Bkg_Exact1S_2us/GoldCt/10um/DIS/NC/10x100/minQ2=1'
 ```
+
+The simulation pipeline uses the same command to build dataset cards for
+official campaigns (`generate_datasets <stage> --rucio`).
 
 ### 3. Download files locally
 
@@ -487,7 +513,7 @@ rucio replica list file --protocols root --pfns --rses isopenaccess 'epic:/RECO/
 rucio download 'epic:/RECO/26.04.1/epic_craterlake/Bkg_Exact1S_2us/GoldCt/10um/DIS/NC/10x100/minQ2=1'
 ```
 
-> (!) You probably don't want to download the full dataset!
+> (!) A full dataset is large — download a sample first.
 
 Downloads land in a directory tree mirroring the DID. Add `--nrandom N`
 to pull only a sample, or `--rse <RSE>` to pin a storage element.
@@ -499,10 +525,10 @@ saves disk:
 
 ```bash
 # List replica URLs for a DID
-rucio list-file-replicas --pfns 'epic:/RECO/26.04.1/.../minQ2=1' | head
+rucio replica list file --protocols root --pfns --rses isopenaccess 'epic:/RECO/26.04.1/.../minQ2=1' | head
 
 # Then open them directly, e.g. in ROOT / uproot / EICrecon:
 root -l 'root://dtn-eic.jlab.org//volatile/eic/EPIC/RECO/.../file.edm4eic.root'
 ```
 
-See [use-cases](https://eic.github.io/tutorial-file-access/03-use_cases/index.html) for the recommended patterns when running many jobs over a dataset.
+See [use-cases](https://eic.github.io/tutorial-file-access/03-use_cases.html) for the recommended patterns when running many jobs over a dataset.
