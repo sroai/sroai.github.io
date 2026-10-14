@@ -46,6 +46,13 @@ gas) into a 2 µs timeframe with the
 Its successor, [eic/TimeframeBuilder](https://github.com/eic/TimeframeBuilder), is being prepared
 for ePIC production; the pipeline has not switched. Details on the [Backgrounds](/ai-epic-background/background) page.
 
+::: warning XRootD needs a 5.9+ client
+JLab XRootD (`root://dtn2304.jlab.org:8443`) accepts only XRootD clients 5.9 and newer.
+Check with `xrdcp --version`. `eic_xl` 26.06-stable and later ship 5.9.1+ (26.10.0-stable: 5.9.2).
+Older clients fail with `Login failed: Got invalid login response` — for example
+`eicdev/eic-full` (5.6.9). The old host `dtn-eic.jlab.org` is retired.
+:::
+
 ## Pages
 
 - [Full-Sim Pipeline](/ai-epic-background/full-sim-pipeline) — stages, job creator and

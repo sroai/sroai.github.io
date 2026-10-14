@@ -44,6 +44,13 @@ Shipped in the `eic_xl` container from `v26.08.0-stable` on
 `master` pins `timeframebuilder@0.9.2`). Earlier images, including
 `eic_xl:26.06.0-stable` and `26.07.x`, have only `SignalBackgroundMerger`.
 
+`eic_xl:26.10.0-stable` (also on CVMFS) carries both `timeframe_builder` 0.9.2 and
+`SignalBackgroundMerger` in `/opt/local/bin`, with
+[epic 26.10.0](https://github.com/eic/epic/releases/tag/26.10.0),
+[EICrecon 1.42.0](https://github.com/eic/EICrecon/releases/tag/v1.42.0),
+[DD4hep 01-38](https://github.com/AIDASoft/DD4hep/releases/tag/v01-38),
+[irt2 2.2.3](https://github.com/eic/irt/releases/tag/v2.2.3) and an XRootD 5.9.2 client.
+
 Production status (public `eic` repositories, 2026-10-14):
 
 - Packaged: Spack package since 2026-07 ([eic-spack#992](https://github.com/eic/eic-spack/pull/992)),
@@ -323,6 +330,13 @@ SIM.hepmc3.useHepMC3 = True
 | Spack packages                                | `hepmcmerger`, `timeframebuilder` in [eic/eic-spack](https://github.com/eic/eic-spack)                                              |
 
 ## XrootD / Rucio access
+
+::: warning XRootD needs a 5.9+ client
+JLab XRootD (`root://dtn2304.jlab.org:8443`) accepts only XRootD clients 5.9 and newer.
+Check with `xrdcp --version`. `eic_xl` 26.06-stable and later ship 5.9.1+ (26.10.0-stable: 5.9.2).
+Older clients fail with `Login failed: Got invalid login response` — for example
+`eicdev/eic-full` (5.6.9). The old host `dtn-eic.jlab.org` is retired.
+:::
 
 The archived campaign driver wrote outputs to
 `xroots://dtn2201.jlab.org//eic/eic2/EPIC/{RECO,FULL,LOG}/<release>/<detector>/...`

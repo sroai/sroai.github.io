@@ -487,7 +487,15 @@ file-access tutorial covers this in full; this section is the minimum.
 
 ```bash
 rucio whoami
+xrdcp --version     # must be v5.9 or newer
 ```
+
+::: warning XRootD needs a 5.9+ client
+JLab XRootD (`root://dtn2304.jlab.org:8443`) accepts only XRootD clients 5.9 and newer.
+Check with `xrdcp --version`. `eic_xl` 26.06-stable and later ship 5.9.1+ (26.10.0-stable: 5.9.2).
+Older clients fail with `Login failed: Got invalid login response` — for example
+`eicdev/eic-full` (5.6.9). The old host `dtn-eic.jlab.org` is retired.
+:::
 
 The Rucio client in `eic-shell` comes configured; `rucio whoami` prints the
 identity it uses. If it fails, follow the setup on the
@@ -532,10 +540,7 @@ rucio replica list file --protocols root --pfns --rses isopenaccess 'epic:/RECO/
 root -l 'root://dtn2304.jlab.org:8443//jlab-osdf-ro/eic/EPIC/volatile/RECO/.../file.edm4eic.root'
 ```
 
-JLab public reads moved from `dtn-eic.jlab.org` (retired, no longer resolves) to
-`dtn2304.jlab.org:8443`. The XRootD client version matters: the clients in `eic_xl:26.06-stable`
-(5.9.1) and `eic_xl:nightly` (5.9.2) connect; `eicdev/eic-full` (5.6.9) fails with
-`Login failed: Got invalid login response`.
+This needs an XRootD 5.9+ client (see [step 1](#_1-check-the-client-inside-eic-shell)).
 The same files are readable over HTTPS at `https://dtn2304.jlab.org:8443/jlab-osdf-ro/eic/EPIC/volatile/...`.
 
 See [use-cases](https://eic.github.io/tutorial-file-access/03-use_cases.html) for the recommended patterns when running many jobs over a dataset.
