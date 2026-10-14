@@ -43,8 +43,8 @@ Stage 11 mixes each signal event with the official ePIC background cocktails
 (synchrotron radiation; electron-beam bremsstrahlung, Coulomb and Touschek; proton beam
 gas) into a 2 µs timeframe with the
 `SignalBackgroundMerger` binary from [eic/HEPMC_Merger](https://github.com/eic/HEPMC_Merger).
-EIC has since moved timeframe building to [eic/TimeframeBuilder](https://github.com/eic/TimeframeBuilder);
-the pipeline has not switched. Details on the [Backgrounds](/ai-epic-background/background) page.
+Its successor, [eic/TimeframeBuilder](https://github.com/eic/TimeframeBuilder), is being prepared
+for ePIC production; the pipeline has not switched. Details on the [Backgrounds](/ai-epic-background/background) page.
 
 ## Pages
 

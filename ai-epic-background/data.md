@@ -184,7 +184,7 @@ carry edm4eic schema 81000 and need the `eic_xl:26.07.0-stable` container — a
 </DidStrips>
 
 k-Λ signal reconstructed with background + beam effects — not on Rucio, on the
-JLab work disk (XRootD via `root://dtn-eic.jlab.org`). One leaf per beam energy
+JLab work disk (XRootD via `root://sci-xrootd.jlab.org`, the `csvpath` host). One leaf per beam energy
 of `k_lambda_<beam>_5000evt_*.edm4eic.root`; file counts are in the beam-energy
 tooltips above. The matching simulation files are in `dd4hep-background/<beam>`
 next to `reco-background/`.
@@ -340,7 +340,8 @@ epic:/RECO/26.03.0/epic_craterlake/Bkg_Exact1S_2us/GoldCt/10um/DIS/NC/10x275/min
 ## Campaign 25.10
 
 Not available on Rucio, but can be downloaded from JLab xrootd
-(`root://dtn-eic.jlab.org//volatile/eic/...`). These strips list the
+(`root://dtn2304.jlab.org:8443//jlab-osdf-ro/eic/EPIC/volatile/...`; a strip path `/volatile/eic/EPIC/<path>` is
+`root://dtn2304.jlab.org:8443//jlab-osdf-ro/eic/EPIC/volatile/<path>`). These strips list the
 **directory paths** under each background configuration rather than leaf DIDs.
 
 <DidStrips
@@ -528,7 +529,13 @@ saves disk:
 rucio replica list file --protocols root --pfns --rses isopenaccess 'epic:/RECO/26.04.1/.../minQ2=1' | head
 
 # Then open them directly, e.g. in ROOT / uproot / EICrecon:
-root -l 'root://dtn-eic.jlab.org//volatile/eic/EPIC/RECO/.../file.edm4eic.root'
+root -l 'root://dtn2304.jlab.org:8443//jlab-osdf-ro/eic/EPIC/volatile/RECO/.../file.edm4eic.root'
 ```
+
+JLab public reads moved from `dtn-eic.jlab.org` (retired, no longer resolves) to
+`dtn2304.jlab.org:8443`. The XRootD client version matters: the clients in `eic_xl:26.06-stable`
+(5.9.1) and `eic_xl:nightly` (5.9.2) connect; `eicdev/eic-full` (5.6.9) fails with
+`Login failed: Got invalid login response`.
+The same files are readable over HTTPS at `https://dtn2304.jlab.org:8443/jlab-osdf-ro/eic/EPIC/volatile/...`.
 
 See [use-cases](https://eic.github.io/tutorial-file-access/03-use_cases.html) for the recommended patterns when running many jobs over a dataset.

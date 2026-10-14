@@ -15,7 +15,7 @@ AI studies on this site. This page covers how they are loaded, labeled and joine
 - In background-mixed samples one entry is one 2 µs timeframe: exactly one signal
   event plus Poisson-sampled background from the beam-induced sources. The signal
   time varies from frame to frame. Our pipeline mixes with `SignalBackgroundMerger`;
-  EIC now uses its successor, [TimeframeBuilder](https://github.com/eic/TimeframeBuilder).
+  its successor, [TimeframeBuilder](https://github.com/eic/TimeframeBuilder), is being prepared for ePIC production.
   Details: [Backgrounds](/ai-epic-background/background).
 - `event_index` has one row per processed entry: its row count is the event count
   of the conversion, and `event_number` maps `evt` to `EventHeader.eventNumber`.

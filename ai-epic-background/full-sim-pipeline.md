@@ -78,10 +78,10 @@ as `--physics.alternativeStableStatuses` / `--physics.alternativeDecayStatuses`
 (`1 2001 3001 …`, `2 2002 3002 …`); without them `npsim` drops the background
 particles.
 
-Current ePIC background mixing is developed in
-[eic/TimeframeBuilder](https://github.com/eic/TimeframeBuilder), which merges
-either HepMC3 or simulated EDM4hep events into timeframes. The pipeline does
-not call it; stage 11 still invokes `SignalBackgroundMerger`.
+Its successor, [eic/TimeframeBuilder](https://github.com/eic/TimeframeBuilder), merges
+either HepMC3 or simulated EDM4hep events into timeframes and is being prepared for
+ePIC production (status on [Backgrounds](/ai-epic-background/background#timeframebuilder)).
+The pipeline does not call it; stage 11 invokes `SignalBackgroundMerger`.
 
 ## CSV conversion (stage 40)
 

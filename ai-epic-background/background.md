@@ -12,9 +12,9 @@ generator  →  abconv (afterburner)  →  SignalBackgroundMerger  →  npsim  �
                                           generator-status offset)
 ```
 This is the chain our pipeline runs (stages 10 → 11 → 22 → 30).
-The current upstream mixer is [eic/TimeframeBuilder](https://github.com/eic/TimeframeBuilder)
-(executable `timeframe_builder`); our stage 11 still calls the
-`SignalBackgroundMerger` binary from [eic/HEPMC\_Merger](https://github.com/eic/HEPMC_Merger).
+Our stage 11 calls the `SignalBackgroundMerger` binary from
+[eic/HEPMC\_Merger](https://github.com/eic/HEPMC_Merger). Its successor is
+[eic/TimeframeBuilder](https://github.com/eic/TimeframeBuilder) (executable `timeframe_builder`).
 :::
 
 ## The big picture
@@ -33,7 +33,7 @@ Background-mixed simulation is built in three independent stages.
 
 ## Mixing tools
 
-### TimeframeBuilder — current upstream
+### TimeframeBuilder — the successor {#timeframebuilder}
 
 **Repo:** [eic/TimeframeBuilder](https://github.com/eic/TimeframeBuilder) ·
 executable `timeframe_builder` · Spack package `timeframebuilder` ·
@@ -43,6 +43,19 @@ Shipped in the `eic_xl` container from `v26.08.0-stable` on
 ([containers spack env](https://github.com/eic/containers/blob/master/spack-environment/xl/spack.yaml);
 `master` pins `timeframebuilder@0.9.2`). Earlier images, including
 `eic_xl:26.06.0-stable` and `26.07.x`, have only `SignalBackgroundMerger`.
+
+Production status (public `eic` repositories, 2026-10-14):
+
+- Packaged: Spack package since 2026-07 ([eic-spack#992](https://github.com/eic/eic-spack/pull/992)),
+  added to the containers in [containers#364](https://github.com/eic/containers/pull/364),
+  pinned to 0.9.2 for `v26.10.0-stable` ([containers#444](https://github.com/eic/containers/pull/444)).
+- Campaign switch prepared: [simulation\_campaign\_hepmc3#102](https://github.com/eic/simulation_campaign_hepmc3/pull/102)
+  replaces `SignalBackgroundMerger` with `timeframe_builder` in `run.sh` (kHz → events/ns,
+  per-source `status_offset`, `repeat_on_eof`). It was under review, with an open question on
+  output equivalence, when the repository was archived on 2026-09-18.
+- Still active: [eic/HEPMC\_Merger](https://github.com/eic/HEPMC_Merger) (pushed 2026-10-05).
+  No public `eic` repository runs `timeframe_builder` in production yet.
+- In development: podio and Arrow reader/writer backends and a JANA2 event source (open PRs).
 
 Differences from SignalBackgroundMerger:
 
@@ -166,9 +179,11 @@ secondaries inherit from their first generator ancestor
 [eic/simulation\_campaign\_datasets](https://github.com/eic/simulation_campaign_datasets/tree/main/config_data)
 — one cocktail per beam energy / vacuum condition. Our copies live in
 [`background_cocktails/`](https://github.com/JeffersonLab/msf-simulation-pipeline/tree/main/background_cocktails)
-of the pipeline repo; they match upstream except for the XrootD host (ours
-still point at `root://dtn-eic.jlab.org//volatile/eic/EPIC/...`, upstream at
-`root://dtn2304.jlab.org:8443//jlab-osdf-ro/eic/EPIC/volatile/...`).
+of the pipeline repo; they match upstream except for the XrootD host: ours
+still point at `root://dtn-eic.jlab.org//volatile/eic/EPIC/...`, a host that no longer
+resolves; upstream moved to `root://dtn2304.jlab.org:8443//jlab-osdf-ro/eic/EPIC/volatile/...`
+([simulation\_campaign\_datasets#66](https://github.com/eic/simulation_campaign_datasets/pull/66)).
+On the farm `strip_xrootd_prefix: true` turns them into local `/volatile` paths.
 
 Each file is a list of sources:
 
