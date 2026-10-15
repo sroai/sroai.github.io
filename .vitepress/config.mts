@@ -45,6 +45,7 @@ export default defineConfig({
                     collapsed: false,
                     items: [
                         { text: 'Available Datasets', link: '/ai-epic-background/data' },
+                        { text: 'Generator Data Survey', link: '/ai-epic-background/evgen-survey' },
                     ]
                 },
                 {
