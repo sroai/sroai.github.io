@@ -331,11 +331,15 @@ SIM.hepmc3.useHepMC3 = True
 
 ## XrootD / Rucio access
 
-::: warning XRootD needs a 5.9+ client
-JLab XRootD (`root://dtn2304.jlab.org:8443`) accepts only XRootD clients 5.9 and newer.
-Check with `xrdcp --version`. `eic_xl` 26.06-stable and later ship 5.9.1+ (26.10.0-stable: 5.9.2).
-Older clients fail with `Login failed: Got invalid login response` — for example
-`eicdev/eic-full` (5.6.9). The old host `dtn-eic.jlab.org` is retired.
+::: warning XRootD needs a 5.9+ client with TLS
+JLab XRootD (`root://dtn2304.jlab.org:8443`) accepts only XRootD clients 5.9 and newer,
+and the login runs over TLS, so the client needs a CA directory.
+Check with `xrdcp --version`. `eic_xl` 26.06-stable and later work as shipped (5.9.1+,
+`X509_CERT_DIR=/opt/local/certificates`; 26.10.0-stable: 5.9.2).
+Both problems show as `Login failed: Got invalid login response`: an older client, or a
+5.9 client without CA certificates (`XRD_LOGLEVEL=Debug` then prints
+`Failed to initialize TLS context: CA directory does not exist`). For the second, set
+`export X509_CERT_DIR=/etc/ssl/certs`. The old host `dtn-eic.jlab.org` is retired.
 :::
 
 The archived campaign driver wrote outputs to
