@@ -26,6 +26,8 @@ _Last updated: **2026-09-29**_
 - Use the per-row 📋 to copy a single DID, the **Copy all** button to copy
   every DID in a strip (newline-separated), or click the prefix line to copy
   the shared DID prefix.
+- Every converted CSV directory, with its converter and roles, is on
+  [CSV Datasets](/ai-epic-background/csv-datasets).
 - A strip's CSV path points to our converted CSVs. Files written by
   [eic2ai](https://github.com/sroai/eic2ai) use the column names on
   [Data Format](/ai-epic-background/data-format); files written earlier by the
@@ -195,7 +197,7 @@ CSVs (simulation-pipeline configs, all under
 | Directory | Config | Converter, roles |
 | --- | --- | --- |
 | `csv-2026-09-background/<beam>` | `config-msf-26-06-background.yaml` | macros: `mc_dis`, `mcpart_lambda`, `reco_particles`, `calo_clusters`, `trk_hits`, `cal_hits` |
-| `csv-2026-09-bkg-phase10/<beam>` | `config-phase10-cal.yaml`, `config-phase10-cal-18x275.yaml` | eic2ai: `trk_hits`, `cal_hits`, `reco_dis`, `event_index`; 10x130 (8 files), 10x100, 18x275 (all 107 files) |
+| `csv-2026-09-bkg-phase10/<beam>` | `config-phase10-cal.yaml`, `config-phase10-cal-18x275.yaml` | eic2ai: `trk_hits`, `cal_hits`, `reco_dis`, `event_index`; 10x100 and 10x130 8 files each, 18x275 100 of the 107 (7 RECO files damaged at the source) |
 
 
 ## Campaign 26.05.0

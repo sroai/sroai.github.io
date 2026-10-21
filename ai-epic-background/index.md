@@ -67,6 +67,10 @@ Both problems show as `Login failed: Got invalid login response`: an older clien
   how to run them.
 - [Data Format](/ai-epic-background/data-format) — column layout of every CSV role.
 - [Available Datasets](/ai-epic-background/data) — background-mixed datasets on Rucio.
+- [CSV Datasets](/ai-epic-background/csv-datasets) — where the converted CSVs are,
+  which converter wrote them and which roles each directory holds.
+- [Generator Data Survey](/ai-epic-background/evgen-survey) — which process exists at
+  which beam energy, with event counts and crossing-angle state.
 - [AI / ML Datasets](/ai-epic-background/ai-datasets) — loading the CSVs in pandas, numpy
   and PyTorch.
 
