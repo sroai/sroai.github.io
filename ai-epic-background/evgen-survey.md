@@ -6,7 +6,8 @@ independent background the merged frames carry. Built from a read-only sweep of
 `/volatile/eic/EPIC/EVGEN` on the JLab farm, with the crossing angle **measured**
 on the beam momenta of 901 sampled files rather than inferred from path names.
 
-**Date:** 2026-10-20 · **Scope:** 2,043 EVGEN directories, 45,647 files,
+**Date:** sweep 2026-10-20; collision-rate tables (section 5) and the FULL
+data inventory (section 6) added 2026-10-22 · **Scope:** 2,043 EVGEN directories, 45,647 files,
 12.5 TiB. **~4.37 billion events in 48 process rows** are ready to feed to
 `ddsim` with no afterburner step; ~4.66G in 58 rows counting head-on, LUND and
 eic-smear sources. 18x275 and 10x100 are the only energies that are both large
@@ -440,8 +441,9 @@ That gives 45,647 files in 1,271 directories holding data, 12.5 TiB in all,
 including the machine-background and single-particle trees that these tables do
 not cover. Reads of file contents go through the `eic_xl` image
 (`/cvmfs/singularity.opensciencegrid.org/eicweb/eic_xl:nightly`, bound
-`-B /volatile:/volatile:ro` with a writable `TMPDIR`). The only writes anywhere on the farm were a few kB of helper scripts under
-`/tmp`, removed afterwards.
+`-B /volatile:/volatile:ro` with a writable `TMPDIR`). The only writes anywhere
+on the farm were a few kB of helper scripts under ifarm's `/tmp`, removed
+afterwards.
 
 ### 4.2 Event counting
 
@@ -497,3 +499,123 @@ once on disk:
   `SIDIS/pythia6/ep_5x41/hepmc_ip6/` holds 320 files whose names say 18x275, 221
   of them byte-identical to the files in `ep_18x275/hepmc_ip6/`; they are dropped
   and the directory's genuine 5x41 files are counted at 5x41.
+
+---
+
+## 5. Collision rates: CDR design peak and 2026 concept average
+
+Same cross sections and the same Poisson formulas in both tables; the
+luminosity differs, and the design table uses the CDR 98.5 MHz crossing
+frequency where the 2026 table uses the 1160-bunch average of 90.8 MHz. Probabilities are *given one event*, the chance that another
+independent ep collision sits in the same bunch crossing, in either neighbouring
+crossing, or anywhere in the same 2 µs frame: same crossing ≈ 1 − e^(−μ) with
+μ = rate / crossing frequency, neighbours ≈ 2μ, frame = 1 − e^(−rate × 2 µs).
+σ_tot ep: 28.5 / 35 / 41 / 50 / 54 µb at 5x41 / 5x100 / 10x100 / 10x275 /
+18x275 (ePIC wiki Background page); 42 µb at 9x130 is interpolated.
+
+### 5.1 CDR design peak luminosity, high-divergence configuration
+
+Luminosities from the EIC Colliding Beam Parameters tables (CDR Table 3.3);
+98.5 MHz crossing frequency (10.15 ns spacing) except 24.6 MHz with 290
+bunches at 18 GeV.
+
+| energy | L [10³³ cm⁻²s⁻¹] | ep rate | μ per crossing | same crossing | either neighbouring crossing | same 2 µs frame |
+|---|---:|---:|---:|---:|---:|---:|
+| 5x41 | 0.44 | 12.5 kHz | 1.3×10⁻⁴ | 0.01% | 0.03% | 2.5% |
+| 5x100 | 3.68 | 129 kHz | 1.3×10⁻³ | 0.13% | 0.26% | 23% |
+| 10x100 | 4.48 | 184 kHz | 1.9×10⁻³ | 0.19% | 0.37% | 31% |
+| 10x275 | 10.0 | 500 kHz | 5.1×10⁻³ | 0.5% | 1.0% | 63% |
+| 18x275 | 1.54 | 83 kHz | 3.4×10⁻³ | 0.34% | 0.68% | 15% |
+
+### 5.2 2026 machine concept, average luminosity per 4 h store
+
+Luminosities from S. Nagaitsev, *ePIC collaboration meeting*, July 2026
+(average over a store; 18 GeV electrons are an upgrade, not part of the
+baseline); Year 3 from the early-science plan (IPAC'26 WEO1T02 Table 1:
+e+p 9×130 GeV, 6.8×10³¹, 0.9 A × 0.3 A, 1160 bunches). All rows divided by the
+1160-bunch frequency; if the 18 GeV upgrade keeps 290 bunches, its two crossing
+columns are 4× larger (≈0.1% and 0.2%) and the frame column is unchanged.
+
+| running | L [10³³ cm⁻²s⁻¹] | ep rate | same crossing | either neighbouring crossing | same 2 µs frame |
+|---|---:|---:|---:|---:|---:|
+| 10x275 | 3.0 | ~150 kHz | 0.17% | 0.33% | 26% |
+| 10x100 | 1.2 | ~49 kHz | 0.05% | 0.11% | 9.3% |
+| 5x100 | 1.0 | ~35 kHz | 0.04% | 0.08% | 6.8% |
+| 18x275, upgrade | 0.44 | ~24 kHz | 0.03% | 0.05% | 4.6% |
+| 5x41 | 0.13 | ~3.7 kHz | 0.004% | 0.008% | 0.7% |
+| early science Year 3, e+p 9x130 | 0.068 | ~2.9 kHz | 0.003% | 0.006% | 0.6% |
+
+### 5.3 Counts per month of running at the 2026-concept rates
+
+30 days at 80% availability = 2.07×10⁶ s. Overlaps of two *DIS* events scale
+these by f², with f the DIS share of σ_tot.
+
+| running | collisions | pairs in one crossing | pairs in adjacent crossings | frames with ≥ 2 events |
+|---|---:|---:|---:|---:|
+| 10x275 | 3.1×10¹¹ | 2.6×10⁸ | 5.1×10⁸ | 3.8×10¹⁰ |
+| 10x100 | 1.0×10¹¹ | 2.7×10⁷ | 5.5×10⁷ | 4.7×10⁹ |
+| Year 3, 9x130 | 6.0×10⁹ | ~1×10⁵ | ~2×10⁵ | 1.7×10⁷ |
+
+### 5.4 Which table the official software uses
+
+The collaboration's Poisson-signal productions (`Bkg_RealisticSignalPer2usFrame`)
+and TimeframeBuilder's ePIC configs (`minbias` source at 0.000083 / 0.0005 /
+0.000129 GHz for 18x275 / 10x275 / 5x100) use the **design** rates of table 5.1.
+Measured on the files: 83.9 kHz in the 25.10.4 SIDIS 18x275 frames and
+188–193 kHz in the HEPMC_merger 10x100 test sample
+([2026-10-15 survey](/ai-epic-background/evgen-survey-full), *Collision rate per beam energy*). The frames on disk therefore carry 3–4× the pile-up the
+2026 concept predicts and ~60× that of Year 3. Use table 5.1 to describe what the
+official frames contain, table 5.2 for what the machine is expected to deliver,
+and the Year 3 row for early science.
+
+---
+
+## 6. Simulated (FULL) data in hand for post-Geant4 mixing
+
+Mixing after Geant4 (TimeframeBuilder in EDM4hep mode, provenance through
+`SubEventHeaders`) needs every source as a simulated `.edm4hep.root` file. This
+table lists what exists as of 2026-10-22. Rucio partitions follow
+[Available Datasets](/ai-epic-background/data) and a Rucio survey of
+26.04.1 / 26.07.0 / 26.07.1; the meson-structure rows follow the pipeline
+configs and a local mirror. File counts marked † were not re-verified on
+2026-10-22.
+
+> **The campaigns keep no background-free signal FULL.** `FULL/26.07.1`,
+> `FULL/26.07.0` and `FULL/26.04.1` hold only `Bkg_*`, `BACKGROUNDS` and
+> `SINGLE`; the simulated signal of every background-free production is purged
+> and only its `RECO` is archived (`MCParticles` survive there, Geant4 hits do
+> not). So "campaign process with FULL" means *background-mixed* FULL, which
+> enters an EDM4hep merge only as an `already_merged` source.
+
+| source | process, generator | energies | background state | files × events | software | use in an EDM4hep merge |
+|---|---|---|---|---|---|---|
+| `FULL/26.07.1/epic_craterlake/Bkg_Exact1S_2us/GoldCt/10um/DIS/NC` | NC DIS, pythia8, `minQ2` = 1, 10, 100, 1000 | 10x100, 10x275 | exactly 1 signal per 2 µs frame + full cocktail (bands 2000–6000) | 99 frames/file; file count on Rucio † | `eic_xl:26.07.0-stable`, edm4eic schema 81000 | `already_merged` source: carries one signal and the background; not background-free |
+| `FULL/26.07.1/.../Bkg_Exact1S_2us/.../SIDIS/pythia6-eic/1.0.0` | SIDIS, pythia6-eic 1.0.0, `q2_0to1` | 10x100, 10x275 | as above | † | `eic_xl:26.07.0-stable` | as above |
+| `FULL/26.07.0/.../Bkg_Exact1S_2us/.../DIS/NC` | NC DIS, pythia8, `minQ2` = 1…1000 | 10x100, 10x275 | as above | 99 frames/file † | `eic_xl:26.07.0-stable` | superseded by 26.07.1; same use |
+| `FULL/26.07.1/.../BACKGROUNDS`, `SINGLE` | machine background, single particles | † | background only / single particles | not surveyed † | 26.07 | **to check first**: if `BACKGROUNDS` holds simulated background-only frames, it is the background source of section 6.1 |
+| `meson-structure-2026-07/dd4hep/<E>` (ours, `/work/eic3/users/romanov`) | K⁺Λ exclusive, eic_mesonsf_generator, afterburned | 5x41, 9x100, 9x130, 9x275 | **background-free** | 1,000 events/file; target 1,000 files per energy † | `eic_xl:26.06-stable` | **physics source as it is**: `generator_status_offset 0`, `already_merged false` |
+| `meson-structure-2026-06/dd4hep-background/<E>` (ours) | K⁺Λ exclusive, eic_mesonsf_generator | 10x100, 10x130, 18x275 | 1 signal per 2 µs frame + cocktail; the 18x275 frames carry SynRad at 13.3 GHz, the gold-coated 10x275-family rate, against 3.324 GHz in the 18x275 cocktail file (section 3.1) | 68 / 43 / 107 files × 5,000 frames | `eicdev-eic-full-2026-06-01.sif` | `already_merged` source only; the different software release makes mixing with eic_xl sources unsafe |
+| `RECO/25.10.4/.../Bkg_OnlyPer2usFrame` | p-beam-gas only | 18x275 | background only | RECO, no FULL | 25.10.4 | none: no Geant4 hits, one background source only |
+| `FULL+RECO/25.06.1/.../Synrad_18GeV_Vac_10000Ahr_Runtime_10ms_Egas_All_18GeV_Hgas_275GeV` | SIDIS pythia6-eic 1.0.0, Poisson signal at 83 kHz | 18x275 | mixed | 68,746 files †, `/volatile` FULL directory empty | 25.06.1 | none without staging from tape, and the release is a year old |
+
+### 6.1 What follows for the mixing plan
+
+- **Background-free physics FULL exists only for our own meson-structure
+  2026-07 production** (4 energies, eic_xl 26.06). Every other process in Marco's
+  class table has to be simulated by us from the crossing-angle EVGEN of
+  section 2 (`npsim`, no merge step), one file set per process and energy. Those
+  sets are reusable for any frame pattern.
+- **The 26.07 DIS/NC and SIDIS FULL are usable right away as `already_merged`
+  frames**: one physics event plus background per frame. Overlaying a second
+  simulated process on them gives the two-process frames of section 5 without
+  simulating any background, at the cost of a fixed 1-signal-per-frame base
+  and the design-rate cocktail.
+- **Background-only frames do not exist unless `FULL/26.07.1/BACKGROUNDS` holds
+  them.** Otherwise they are produced by us: TimeframeBuilder in HepMC3 mode
+  with the five cocktail sources and no signal, then `npsim`, one Geant4 pass per
+  frame, so repeated use of the input pool does not repeat hits.
+- **One software release per merged frame.** The container of the background
+  frames, of each physics source and of the final EICrecon must match
+  (`eic_xl:26.07.0-stable` for anything mixed with the 26.07 campaign files,
+  `26.06-stable` for the meson-structure 2026-07 set). The 2026-06 k-Λ frames
+  (`eicdev-eic-full`) stay in their own family.

@@ -10,6 +10,7 @@ no base files. The file is also the record of what ran where.
 
 | Config file | Stages and notes |
 | --- | --- |
+| `config-msf-26-11.yaml` | Meson-structure, November 2026, `eic_xl:26.11-stable`: 40k K⁺Λ events per energy (first 500 events of the first 80 files of 2026-07) through `npsim` alone, per-source background pools (`npsim_bgsource`), then TimeframeBuilder frames (stage 13 with the block name: `tfb_2us`, `tfb_200ns` with the signal pinned at t = 0, `bkg_2us` background-only). Stops at EDM4hep. Energies 5x41 (signal only), 9x100, 9x130, 9x275 |
 | `config-msf-26-07.yaml` | Meson-structure, July 2026: `afterburner` → `npsim` → `eicrecon` (B0 truth-seeding `flags`) → `csv_dd4hep`, `csv_eicrecon`, `csv_cal` (paired). Energies 5x41, 9x100, 9x130, 9x275 |
 | `config-msf-26-07-background.yaml` | Same signal with ePIC background cocktails: `afterburner` → `bg_merger` → `npsim_background` → `eicrecon` → `csv_eicrecon` |
 | `config-msf-26-06-background.yaml` | June 2026 background campaign (10x100, 10x130, 18x275), CSV re-conversion in September 2026. Sim and reco exist; only `csv_background` (paired, macros including `edm4eic_cal_hits`) runs |

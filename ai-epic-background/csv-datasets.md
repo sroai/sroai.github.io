@@ -9,20 +9,23 @@ and PyTorch is on [AI / ML Datasets](/ai-epic-background/ai-datasets). The
 
 ## Access
 
-Everything below is on the JLab work disk, not in Rucio. On the farm the paths
-work as written; from outside, prefix them with the XRootD host:
+Everything below is on the JLab work disk under `/work/eic3/users/romanov/`
+(older sets under `/work/eic/users/romanov/`), not in Rucio. On the farm the
+paths work as written.
+
+::: warning No XRootD route from outside JLab (checked 2026-10-22)
+`root://sci-xrootd.jlab.org` resolves but every request times out from offsite,
+and the public door `root://dtn2304.jlab.org:8443` exports only
+`/jlab-osdf-ro/eic/EPIC/{volatile,cache,work}` (`work` = `/work/eic/EPIC`), so no
+user directory under `/work/eic3/users` is reachable through it. From outside,
+copy through an ifarm login:
 
 ```bash
-# one file
-xrdcp root://sci-xrootd.jlab.org//work/eic3/users/romanov/meson-structure-2026-06/\
-csv-2026-09-bkg-phase10/18x275/k_lambda_18x275_5000evt_0022.trk_hits.csv.zip .
-
-# a whole role of a directory
-xrdfs root://sci-xrootd.jlab.org ls /work/eic3/users/romanov/meson-structure-2026-06/csv-2026-09-bkg-phase10/18x275
+scp 'ifarm.jlab.org:/work/eic3/users/romanov/meson-structure-2026-06/csv-2026-09-bkg-phase10/18x275/*.trk_hits.csv.zip' .
 ```
 
-The XRootD client has to be 5.9 or newer and needs a CA directory — see the
-warning on the [project overview](/ai-epic-background/).
+A copy into an exported collaboration area would restore XRootD access.
+:::
 
 Files are named `<stem>.<role>.csv.zip`, one ZIP64 deflate entry each, which
 pandas reads directly. A role whose writer fails leaves no file, so a file that

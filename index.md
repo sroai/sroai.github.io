@@ -7,6 +7,9 @@ hero:
   name: SRO AI
   text: AI for Streaming Readout
   tagline: Real-time signal and background separation in continuous nuclear physics data streams
+  image:
+    src: /logo/sro-ai-logo-512.png
+    alt: SRO AI logo
   actions:
     - theme: brand
       text: Data

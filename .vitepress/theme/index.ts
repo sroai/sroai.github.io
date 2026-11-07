@@ -1,5 +1,6 @@
 import DefaultTheme from "vitepress/theme";
 import Layout from "./Layout.vue";
+import "./logo.css";
 import HistogramViewer from "./components/HistogramViewer.vue";
 import JsonHistogram from "./components/JsonHistogram.vue";
 import PlotCompareViewer from "./components/PlotCompareViewer.vue";

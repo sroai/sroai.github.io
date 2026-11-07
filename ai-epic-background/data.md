@@ -186,7 +186,8 @@ carry edm4eic schema 81000 and need the `eic_xl:26.07.0-stable` container — a
 </DidStrips>
 
 k-Λ signal reconstructed with background + beam effects — not on Rucio, on the
-JLab work disk (XRootD via `root://sci-xrootd.jlab.org`, the `csvpath` host). One leaf per beam energy
+JLab work disk (farm paths; the `csvpath` XRootD host does not answer from outside
+JLab, see [CSV Datasets](/ai-epic-background/csv-datasets)). One leaf per beam energy
 of `k_lambda_<beam>_5000evt_*.edm4eic.root`; file counts are in the beam-energy
 tooltips above. The matching simulation files are in `dd4hep-background/<beam>`
 next to `reco-background/`.

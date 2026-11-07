@@ -12,9 +12,15 @@ export default defineConfig({
 
     head: [
         ['meta', { name: 'viewport', content: 'width=device-width, initial-scale=1.0' }],
+        ['link', { rel: 'icon', type: 'image/png', sizes: '64x64', href: '/favicon.png' }],
+        ['link', { rel: 'icon', href: '/favicon.ico' }],
+        ['link', { rel: 'apple-touch-icon', sizes: '180x180', href: '/logo/apple-touch-icon.png' }],
+        ['meta', { property: 'og:image', content: 'https://sroai.github.io/logo/sro-ai-logo-512.png' }],
+        ['meta', { name: 'twitter:card', content: 'summary' }],
     ],
 
     themeConfig: {
+        logo: { src: '/logo/sro-ai-emblem-192.png', alt: 'SRO AI' },
         nav: [
             { text: 'Home', link: '/' },
             { text: 'Data', link: '/ai-epic-background/data' },
