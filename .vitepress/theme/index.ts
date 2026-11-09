@@ -7,6 +7,7 @@ import PlotCompareViewer from "./components/PlotCompareViewer.vue";
 import VerticalComparePlot from "./components/VerticalComparePlot.vue";
 import DidTable from "./components/DidTable.vue";
 import DidStrips, { Tags, Tag, More, Dids } from "./components/DidStrips.vue";
+import CsvSchema from "./components/CsvSchema.vue";
 
 export default {
   extends: DefaultTheme,
@@ -22,5 +23,6 @@ export default {
     app.component('Tag', Tag);
     app.component('More', More);
     app.component('Dids', Dids);
+    app.component('CsvSchema', CsvSchema);
   }
 };

@@ -32,8 +32,9 @@
   },
   "homepage": "https://sroai.github.io/",
   "devDependencies": {
+    "echarts": "^6.1.0",
     "vitepress": "2.0.0-alpha.20",
     "vitepress-plugin-lightbox": "^1.0.3",
-    "echarts": "^6.1.0"
+    "yaml": "^2.8.1"
   }
 }

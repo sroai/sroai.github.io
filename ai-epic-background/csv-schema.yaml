@@ -1,0 +1,1042 @@
+# eic2ai CSV schema: the source of the CSV Schema page (csv-schema.md).
+#
+# Edit by hand. One entry per CSV file; under `columns`, one line per column in the
+# order eic2ai writes them:   name: description [unit]
+# A trailing [unit] goes to the page's unit column. `keys` lists the columns that
+# identify one row; `links` maps a column holding a row number of another file to
+# that file's column, and the page draws it as an arrow.
+#
+# eic2ai's tests/check_schema.py (run by its CI) fails when a column eic2ai writes
+# is missing here, extra, out of order, or has no description.
+
+layout:   # the diagram: three columns of boxes, top to bottom, and a band of boxes below them
+  left: [trk_hits, cal_hits, calo_clusters]
+  center: [event_index, mc_dis, mc_particles]
+  right: [reco_particles, reco_dis, reco_ff_lambda]
+  bottom: [mcpart_lambda, lambda_acceptance, acceptance_ppim, acceptance_ppim_prot_hits, acceptance_ppim_pimin_hits,
+           acceptance_npi0, combinatorics_ppim, comb_candidates, comb_candidates_events]
+
+lane_titles:
+  left: Hits and clusters
+  center: Events and MC truth
+  right: Reconstruction
+  bottom: Λ analysis tables
+
+files:
+  event_index:
+    row: one processed event
+    needs: any
+    keys: [evt]
+    columns:
+      evt:              entry number in the input file; joins every file of one input
+      event_number:     EventHeader event number
+      reco_collections: collections in the reco frame, 0 without a reco file
+      sim_collections:  collections in the sim frame, 0 without a sim file
+
+  trk_hits:
+    row: one tracker hit, with the MC particle that made it
+    needs: reco
+    links:
+      prt_index: mc_particles.prt_index
+    columns:
+      evt:                 entry number in the input file; joins every file of one input
+      hit_index:           index of the hit association in its association collection
+      prt_index:           index of the particle in MCParticles
+      prt_pdg:             PDG code (11 e⁻, 22 γ, 211 π⁺, 2112 n, 2212 p, 3122 Λ, …)
+      prt_gen_status:      generator status — 1 final state, 2 decayed by the generator, 4 beam, 0 made by Geant4; background particles carry an added multiple of 1000
+      prt_origin:          signal or background — 0 unknown, 1 signal from the generator, 2 Geant4 secondary of a signal particle, 3 background from the generator, 4 Geant4 secondary of a background particle
+      prt_energy:          total energy [GeV]
+      prt_charge:          electric charge [e]
+      prt_mom_x:           momentum x [GeV/c]
+      prt_mom_y:           momentum y [GeV/c]
+      prt_mom_z:           momentum z [GeV/c]
+      prt_vtx_time:        time at the production vertex [ns]
+      prt_vtx_pos_x:       production vertex x [mm]
+      prt_vtx_pos_y:       production vertex y [mm]
+      prt_vtx_pos_z:       production vertex z [mm]
+      prt_end_time:        equal to prt_vtx_time (EDM4hep stores one time per particle) [ns]
+      prt_end_pos_x:       end point x [mm]
+      prt_end_pos_y:       end point y [mm]
+      prt_end_pos_z:       end point z [mm]
+      trk_hit_cell_id:     full cellID of the reconstructed hit
+      trk_hit_system_id:   detector system id (bits 0–7 of the cellID)
+      trk_hit_system_name: detector name, e.g. VertexBarrel_0 (Unknown for ids outside the table)
+      trk_hit_pos_x:       reconstructed hit position x [mm]
+      trk_hit_pos_y:       reconstructed hit position y [mm]
+      trk_hit_pos_z:       reconstructed hit position z [mm]
+      trk_hit_time:        reconstructed hit time [ns]
+      trk_hit_pos_err_xx:  position variance xx [mm²]
+      trk_hit_pos_err_yy:  position variance yy [mm²]
+      trk_hit_pos_err_zz:  position variance zz [mm²]
+      trk_hit_time_err:    time uncertainty [ns]
+      trk_hit_edep:        energy deposited in the sensor [GeV]
+      trk_hit_edep_err:    energy deposit uncertainty [GeV]
+
+  cal_hits:
+    row: one calorimeter hit, labeled from the simulated cell
+    needs: reco + sim
+    links:
+      prt_index: mc_particles.prt_index
+    columns:
+      evt:                 entry number in the input file; joins every file of one input
+      cal_hit_collection:  rec-hit collection name (the detector)
+      cal_hit_cell_id:     full cellID (the same cell in sim and reco)
+      cal_hit_system_id:   detector system id (bits 0–7 of the cellID)
+      cal_hit_system_name: detector name
+      cal_hit_pos_x:       hit position x [mm]
+      cal_hit_pos_y:       hit position y [mm]
+      cal_hit_pos_z:       hit position z [mm]
+      cal_hit_energy:      calibrated energy [GeV]
+      cal_hit_energy_err:  energy uncertainty [GeV]
+      cal_hit_time:        digitized time [ns]
+      cal_hit_time_err:    time uncertainty [ns]
+      sim_energy:          sum of the cell's contribution energies, the raw deposit [GeV]
+      sim_time:            earliest contribution time [ns]
+      n_contrib:           contributions in the cell
+      label_purity:        energy fraction of the majority origin class
+      prt_index:           index of the representative particle (largest contributor of the majority class) in MCParticles; 0 when the cell has no sim hit (prt_origin 0)
+      prt_pdg:             PDG code (11 e⁻, 22 γ, 211 π⁺, 2112 n, 2212 p, 3122 Λ, …)
+      prt_gen_status:      generator status — 1 final state, 2 decayed by the generator, 4 beam, 0 made by Geant4; background particles carry an added multiple of 1000
+      prt_origin:          signal or background — 0 unknown, 1 signal from the generator, 2 Geant4 secondary of a signal particle, 3 background from the generator, 4 Geant4 secondary of a background particle
+      prt_energy:          total energy [GeV]
+      prt_charge:          electric charge [e]
+      prt_mom_x:           momentum x [GeV/c]
+      prt_mom_y:           momentum y [GeV/c]
+      prt_mom_z:           momentum z [GeV/c]
+      prt_vtx_time:        time at the production vertex [ns]
+      prt_vtx_pos_x:       production vertex x [mm]
+      prt_vtx_pos_y:       production vertex y [mm]
+      prt_vtx_pos_z:       production vertex z [mm]
+      prt_end_pos_x:       end point x [mm]
+      prt_end_pos_y:       end point y [mm]
+      prt_end_pos_z:       end point z [mm]
+
+  calo_clusters:
+    row: one cluster ↔ MC particle association
+    needs: reco
+    keys: [evt, clu_collection, clu_index]
+    links:
+      prt_index: mc_particles.prt_index
+    columns:
+      evt:               entry number in the input file; joins every file of one input
+      clu_index:         index of the association in its collection
+      clu_collection:    association collection name (detector + algorithm)
+      prt_index:         index of the particle in MCParticles
+      prt_pdg:           PDG code (11 e⁻, 22 γ, 211 π⁺, 2112 n, 2212 p, 3122 Λ, …)
+      prt_gen_status:    generator status — 1 final state, 2 decayed by the generator, 4 beam, 0 made by Geant4; background particles carry an added multiple of 1000
+      prt_origin:        signal or background — 0 unknown, 1 signal from the generator, 2 Geant4 secondary of a signal particle, 3 background from the generator, 4 Geant4 secondary of a background particle
+      prt_energy:        total energy [GeV]
+      prt_charge:        electric charge [e]
+      prt_mom_x:         momentum x [GeV/c]
+      prt_mom_y:         momentum y [GeV/c]
+      prt_mom_z:         momentum z [GeV/c]
+      prt_vtx_time:      time at the production vertex [ns]
+      prt_vtx_pos_x:     production vertex x [mm]
+      prt_vtx_pos_y:     production vertex y [mm]
+      prt_vtx_pos_z:     production vertex z [mm]
+      prt_end_time:      equal to prt_vtx_time (EDM4hep stores one time per particle) [ns]
+      prt_end_pos_x:     end point x [mm]
+      prt_end_pos_y:     end point y [mm]
+      prt_end_pos_z:     end point z [mm]
+      clu_first_cell_id: cellID of the first constituent hit, 0 when none resolves
+      clu_system_id:     detector system id of that cellID
+      clu_system_name:   detector name, Unknown when no hit resolves
+      clu_type:          cluster type flag
+      clu_energy:        cluster energy [GeV]
+      clu_energy_err:    energy uncertainty [GeV]
+      clu_time:          cluster time [ns]
+      clu_time_err:      time uncertainty [ns]
+      clu_nhits:         hits in the cluster
+      clu_pos_x:         cluster position x [mm]
+      clu_pos_y:         cluster position y [mm]
+      clu_pos_z:         cluster position z [mm]
+      clu_pos_err_xx:    position variance xx [mm²]
+      clu_pos_err_yy:    position variance yy [mm²]
+      clu_pos_err_zz:    position variance zz [mm²]
+      clu_theta:         intrinsic polar angle [rad]
+      clu_phi:           intrinsic azimuthal angle [rad]
+      clu_assoc_weight:  association weight
+
+  mc_dis:
+    row: one event, with the generator's DIS kinematics
+    needs: reco
+    keys: [evt]
+    columns:
+      evt:        entry number in the input file; joins every file of one input
+      alphas:     light-cone momentum fraction of the spectator baryon
+      mx2:        squared invariant mass of the hadronic final state at the vertex [GeV²]
+      nu:         energy transfer ν [GeV]
+      p_rt:       generator variable p_rt (no definition in the generator notes)
+      pdrest:     momentum of the incoming ion in its rest frame [GeV/c]
+      pperps:     transverse momentum of the spectator in the rest frame [GeV/c]
+      pperpz:     generator variable pperpz (no definition in the generator notes)
+      q2:         Q² [GeV²]
+      s_e:        electron-ion invariant mass squared s [GeV²]
+      s_q:        virtual photon-ion invariant mass squared [GeV²]
+      tempvar:    generator debug variable, not physics
+      tprime:     t′ = t − t_min [GeV²]
+      tspectator: Mandelstam t at the spectator vertex [GeV²]
+      twopdotk:   2 P·k, ion and electron four-momenta [GeV²]
+      twopdotq:   2 P·q, ion and virtual-photon four-momenta [GeV²]
+      w:          hadronic invariant mass W [GeV]
+      x_d:        x rescaled to the ion mass, x_Bj × M_p / M_ion
+      xbj:        Bjorken x
+      y_d:        inelasticity y = Q² / (x_D · 2P·k)
+      yplus:      1 + (1 − y)²
+
+  mc_particles:
+    row: one simulated particle
+    needs: reco
+    keys: [evt, prt_index]
+    links:
+      prt_parent_index: mc_particles.prt_index
+    columns:
+      evt:              entry number in the input file; joins every file of one input
+      prt_index:        index of the particle in MCParticles
+      prt_pdg:          PDG code (11 e⁻, 22 γ, 211 π⁺, 2112 n, 2212 p, 3122 Λ, …)
+      prt_gen_status:   generator status — 1 final state, 2 decayed by the generator, 4 beam, 0 made by Geant4; background particles carry an added multiple of 1000
+      prt_sim_status:   Geant4 status bit field (created in simulation, decayed in tracker, …)
+      prt_origin:       signal or background — 0 unknown, 1 signal from the generator, 2 Geant4 secondary of a signal particle, 3 background from the generator, 4 Geant4 secondary of a background particle
+      prt_mass:         mass [GeV/c²]
+      prt_energy:       total energy [GeV]
+      prt_charge:       electric charge [e]
+      prt_mom_x:        momentum x [GeV/c]
+      prt_mom_y:        momentum y [GeV/c]
+      prt_mom_z:        momentum z [GeV/c]
+      prt_vtx_time:     time at the production vertex [ns]
+      prt_vtx_pos_x:    production vertex x [mm]
+      prt_vtx_pos_y:    production vertex y [mm]
+      prt_vtx_pos_z:    production vertex z [mm]
+      prt_end_pos_x:    end point x [mm]
+      prt_end_pos_y:    end point y [mm]
+      prt_end_pos_z:    end point z [mm]
+      prt_n_parents:    number of parents
+      prt_n_daughters:  number of daughters
+      prt_parent_index: index of the first parent in MCParticles, -1 without parents
+
+  mcpart_lambda:
+    row: one generated Λ with its decay products
+    needs: reco
+    prefixes:
+      lam: Λ
+      prot: proton from the Λ
+      pimin: π⁻ from the Λ
+      neut: neutron from the Λ
+      pizero: π⁰ from the Λ
+      gamone: first photon from the π⁰
+      gamtwo: second photon from the π⁰
+    links:
+      lam_index: mc_particles.prt_index
+      prot_index: mc_particles.prt_index
+      pimin_index: mc_particles.prt_index
+      neut_index: mc_particles.prt_index
+      pizero_index: mc_particles.prt_index
+      gamone_index: mc_particles.prt_index
+      gamtwo_index: mc_particles.prt_index
+    columns:
+      evt:                entry number in the input file; joins every file of one input
+      lam_is_first:       1 for the first Λ of the event, which the generator makes the spectator Λ
+      lam_decay:          Λ decay type — 0 no daughters, 1 p π⁻, 2 n π⁰, 3 more than two daughters, 4 only p, 5 only π⁺, 6 only n, 7 only π⁰, 8 other
+      # Λ
+      lam_index:          index in MCParticles
+      lam_pdg:            PDG code
+      lam_gen_status:     generator status
+      lam_sim_status:     Geant4 status bit field
+      lam_mom_x:          momentum x [GeV/c]
+      lam_mom_y:          momentum y [GeV/c]
+      lam_mom_z:          momentum z [GeV/c]
+      lam_vtx_pos_x:      production vertex x [mm]
+      lam_vtx_pos_y:      production vertex y [mm]
+      lam_vtx_pos_z:      production vertex z [mm]
+      lam_end_pos_x:      end point x [mm]
+      lam_end_pos_y:      end point y [mm]
+      lam_end_pos_z:      end point z [mm]
+      lam_vtx_time:       time at the production vertex [ns]
+      lam_n_daughters:    number of daughters
+      lam_n_parents:      number of parents
+      # proton from the Λ
+      prot_index:         index in MCParticles
+      prot_pdg:           PDG code
+      prot_gen_status:    generator status
+      prot_sim_status:    Geant4 status bit field
+      prot_mom_x:         momentum x [GeV/c]
+      prot_mom_y:         momentum y [GeV/c]
+      prot_mom_z:         momentum z [GeV/c]
+      prot_vtx_pos_x:     production vertex x [mm]
+      prot_vtx_pos_y:     production vertex y [mm]
+      prot_vtx_pos_z:     production vertex z [mm]
+      prot_end_pos_x:     end point x [mm]
+      prot_end_pos_y:     end point y [mm]
+      prot_end_pos_z:     end point z [mm]
+      prot_vtx_time:      time at the production vertex [ns]
+      prot_n_daughters:   number of daughters
+      prot_n_parents:     number of parents
+      # π⁻ from the Λ
+      pimin_index:        index in MCParticles
+      pimin_pdg:          PDG code
+      pimin_gen_status:   generator status
+      pimin_sim_status:   Geant4 status bit field
+      pimin_mom_x:        momentum x [GeV/c]
+      pimin_mom_y:        momentum y [GeV/c]
+      pimin_mom_z:        momentum z [GeV/c]
+      pimin_vtx_pos_x:    production vertex x [mm]
+      pimin_vtx_pos_y:    production vertex y [mm]
+      pimin_vtx_pos_z:    production vertex z [mm]
+      pimin_end_pos_x:    end point x [mm]
+      pimin_end_pos_y:    end point y [mm]
+      pimin_end_pos_z:    end point z [mm]
+      pimin_vtx_time:     time at the production vertex [ns]
+      pimin_n_daughters:  number of daughters
+      pimin_n_parents:    number of parents
+      # neutron from the Λ
+      neut_index:         index in MCParticles
+      neut_pdg:           PDG code
+      neut_gen_status:    generator status
+      neut_sim_status:    Geant4 status bit field
+      neut_mom_x:         momentum x [GeV/c]
+      neut_mom_y:         momentum y [GeV/c]
+      neut_mom_z:         momentum z [GeV/c]
+      neut_vtx_pos_x:     production vertex x [mm]
+      neut_vtx_pos_y:     production vertex y [mm]
+      neut_vtx_pos_z:     production vertex z [mm]
+      neut_end_pos_x:     end point x [mm]
+      neut_end_pos_y:     end point y [mm]
+      neut_end_pos_z:     end point z [mm]
+      neut_vtx_time:      time at the production vertex [ns]
+      neut_n_daughters:   number of daughters
+      neut_n_parents:     number of parents
+      # π⁰ from the Λ
+      pizero_index:       index in MCParticles
+      pizero_pdg:         PDG code
+      pizero_gen_status:  generator status
+      pizero_sim_status:  Geant4 status bit field
+      pizero_mom_x:       momentum x [GeV/c]
+      pizero_mom_y:       momentum y [GeV/c]
+      pizero_mom_z:       momentum z [GeV/c]
+      pizero_vtx_pos_x:   production vertex x [mm]
+      pizero_vtx_pos_y:   production vertex y [mm]
+      pizero_vtx_pos_z:   production vertex z [mm]
+      pizero_end_pos_x:   end point x [mm]
+      pizero_end_pos_y:   end point y [mm]
+      pizero_end_pos_z:   end point z [mm]
+      pizero_vtx_time:    time at the production vertex [ns]
+      pizero_n_daughters: number of daughters
+      pizero_n_parents:   number of parents
+      # first photon from the π⁰
+      gamone_index:       index in MCParticles
+      gamone_pdg:         PDG code
+      gamone_gen_status:  generator status
+      gamone_sim_status:  Geant4 status bit field
+      gamone_mom_x:       momentum x [GeV/c]
+      gamone_mom_y:       momentum y [GeV/c]
+      gamone_mom_z:       momentum z [GeV/c]
+      gamone_vtx_pos_x:   production vertex x [mm]
+      gamone_vtx_pos_y:   production vertex y [mm]
+      gamone_vtx_pos_z:   production vertex z [mm]
+      gamone_end_pos_x:   end point x [mm]
+      gamone_end_pos_y:   end point y [mm]
+      gamone_end_pos_z:   end point z [mm]
+      gamone_vtx_time:    time at the production vertex [ns]
+      gamone_n_daughters: number of daughters
+      gamone_n_parents:   number of parents
+      # second photon from the π⁰
+      gamtwo_index:       index in MCParticles
+      gamtwo_pdg:         PDG code
+      gamtwo_gen_status:  generator status
+      gamtwo_sim_status:  Geant4 status bit field
+      gamtwo_mom_x:       momentum x [GeV/c]
+      gamtwo_mom_y:       momentum y [GeV/c]
+      gamtwo_mom_z:       momentum z [GeV/c]
+      gamtwo_vtx_pos_x:   production vertex x [mm]
+      gamtwo_vtx_pos_y:   production vertex y [mm]
+      gamtwo_vtx_pos_z:   production vertex z [mm]
+      gamtwo_end_pos_x:   end point x [mm]
+      gamtwo_end_pos_y:   end point y [mm]
+      gamtwo_end_pos_z:   end point z [mm]
+      gamtwo_vtx_time:    time at the production vertex [ns]
+      gamtwo_n_daughters: number of daughters
+      gamtwo_n_parents:   number of parents
+
+  reco_particles:
+    row: one reconstructed particle
+    needs: reco
+    keys: [evt, rec_index]
+    columns:
+      evt:                      entry number in the input file; joins every file of one input
+      rec_index:                index in ReconstructedParticles
+      rec_pdg:                  PDG code assigned by reconstruction
+      rec_charge:               electric charge [e]
+      rec_energy:               energy [GeV]
+      rec_mass:                 mass [GeV/c²]
+      rec_mom_x:                momentum x [GeV/c]
+      rec_mom_y:                momentum y [GeV/c]
+      rec_mom_z:                momentum z [GeV/c]
+      rec_ref_pos_x:            reference point x [mm]
+      rec_ref_pos_y:            reference point y [mm]
+      rec_ref_pos_z:            reference point z [mm]
+      rec_pid_goodness:         goodness of the PID hypothesis
+      rec_type:                 particle type flag
+      rec_n_clusters:           clusters attached
+      rec_n_tracks:             tracks attached
+      rec_n_particles:          daughter particles
+      rec_n_particle_ids:       ParticleID hypotheses
+      rec_n_cluster_hits:       calorimeter hits behind the clusters
+      rec_n_track_measurements: measurements behind the tracks
+      rec_n_tracker_hits:       tracker hits behind those measurements
+
+  reco_dis:
+    row: one event, with reconstructed and true DIS kinematics
+    needs: reco
+    keys: [evt]
+    columns:
+      evt:                 entry number in the input file; joins every file of one input
+      da_x:                Bjorken x, double-angle method
+      da_q2:               Q², double-angle method [GeV²]
+      da_y:                inelasticity y, double-angle method
+      da_nu:               energy transfer ν, double-angle method [GeV]
+      da_w:                hadronic invariant mass W, double-angle method [GeV]
+      esigma_x:            Bjorken x, e-Σ method
+      esigma_q2:           Q², e-Σ method [GeV²]
+      esigma_y:            inelasticity y, e-Σ method
+      esigma_nu:           energy transfer ν, e-Σ method [GeV]
+      esigma_w:            hadronic invariant mass W, e-Σ method [GeV]
+      electron_x:          Bjorken x, electron method
+      electron_q2:         Q², electron method [GeV²]
+      electron_y:          inelasticity y, electron method
+      electron_nu:         energy transfer ν, electron method [GeV]
+      electron_w:          hadronic invariant mass W, electron method [GeV]
+      jb_x:                Bjorken x, Jacquet-Blondel method
+      jb_q2:               Q², Jacquet-Blondel method [GeV²]
+      jb_y:                inelasticity y, Jacquet-Blondel method
+      jb_nu:               energy transfer ν, Jacquet-Blondel method [GeV]
+      jb_w:                hadronic invariant mass W, Jacquet-Blondel method [GeV]
+      ml_x:                Bjorken x, machine-learning method
+      ml_q2:               Q², machine-learning method [GeV²]
+      ml_y:                inelasticity y, machine-learning method
+      ml_nu:               energy transfer ν, machine-learning method [GeV]
+      ml_w:                hadronic invariant mass W, machine-learning method [GeV]
+      sigma_x:             Bjorken x, Σ method
+      sigma_q2:            Q², Σ method [GeV²]
+      sigma_y:             inelasticity y, Σ method
+      sigma_nu:            energy transfer ν, Σ method [GeV]
+      sigma_w:             hadronic invariant mass W, Σ method [GeV]
+      truth_x:             Bjorken x, EICrecon's true kinematics (InclusiveKinematicsTruth)
+      truth_q2:            Q², EICrecon's true kinematics (InclusiveKinematicsTruth) [GeV²]
+      truth_y:             inelasticity y, EICrecon's true kinematics (InclusiveKinematicsTruth)
+      truth_nu:            energy transfer ν, EICrecon's true kinematics (InclusiveKinematicsTruth) [GeV]
+      truth_w:             hadronic invariant mass W, EICrecon's true kinematics (InclusiveKinematicsTruth) [GeV]
+      mc_x:                generator Bjorken x (event parameter dis_xbj)
+      mc_q2:               generator Q² (dis_q2) [GeV²]
+      mc_y:                generator y (dis_y_d)
+      mc_nu:               generator ν (dis_nu) [GeV]
+      mc_w:                generator W (dis_w) [GeV]
+      mc_true_t:           generator t at the spectator vertex (dis_tspectator) [GeV²]
+      mc_lam_tb_t:         t of the true Λ against the true beam proton [GeV²]
+      mc_lam_exp_t:        t of the true Λ against the nominal beam proton of the running mode, crossing angle applied [GeV²]
+      ff_lam_tb_t:         t of the far-forward Λ against the true beam proton [GeV²]
+      ff_lam_exp_t:        t of the far-forward Λ against the nominal beam proton [GeV²]
+      elec_index:          index of the electron method's scattered electron in ReconstructedChargedParticles (not reco_particles); EICrecon 1.43 takes it from ScatteredElectronsTruth
+      elec_energy:         scattered electron, energy [GeV]
+      elec_mom_x:          scattered electron, momentum x [GeV/c]
+      elec_mom_y:          scattered electron, momentum y [GeV/c]
+      elec_mom_z:          scattered electron, momentum z [GeV/c]
+      elec_ref_pos_x:      scattered electron, reference point x [mm]
+      elec_ref_pos_y:      scattered electron, reference point y [mm]
+      elec_ref_pos_z:      scattered electron, reference point z [mm]
+      elec_pid_goodness:   scattered electron, goodness of the PID hypothesis
+      elec_type:           scattered electron, particle type flag
+      elec_n_clusters:     scattered electron, clusters attached
+      elec_n_tracks:       scattered electron, tracks attached
+      elec_n_particles:    scattered electron, daughter particles
+      elec_n_particle_ids: scattered electron, ParticleID hypotheses
+      mc_elec_mom_x:       momentum x of the true scattered electron (first electron after the beam electron) [GeV/c]
+      mc_elec_mom_y:       momentum y of the true scattered electron (first electron after the beam electron) [GeV/c]
+      mc_elec_mom_z:       momentum z of the true scattered electron (first electron after the beam electron) [GeV/c]
+      mc_lam_mom_x:        momentum x of the true Λ (first in MCParticles) [GeV/c]
+      mc_lam_mom_y:        momentum y of the true Λ (first in MCParticles) [GeV/c]
+      mc_lam_mom_z:        momentum z of the true Λ (first in MCParticles) [GeV/c]
+      ff_lam_mom_x:        momentum x of the far-forward Λ (first in ReconstructedLambdas) [GeV/c]
+      ff_lam_mom_y:        momentum y of the far-forward Λ (first in ReconstructedLambdas) [GeV/c]
+      ff_lam_mom_z:        momentum z of the far-forward Λ (first in ReconstructedLambdas) [GeV/c]
+      mc_beam_prot_mom_x:  momentum x of the true beam proton [GeV/c]
+      mc_beam_prot_mom_y:  momentum y of the true beam proton [GeV/c]
+      mc_beam_prot_mom_z:  momentum z of the true beam proton [GeV/c]
+      mc_beam_elec_mom_x:  momentum x of the true beam electron [GeV/c]
+      mc_beam_elec_mom_y:  momentum y of the true beam electron [GeV/c]
+      mc_beam_elec_mom_z:  momentum z of the true beam electron [GeV/c]
+
+  reco_ff_lambda:
+    row: one far-forward Λ reconstructed as n γ γ
+    needs: reco
+    prefixes:
+      lam: the far-forward Λ (ReconstructedLambdas)
+      neut: its neutron
+      gamone: its first photon
+      gamtwo: its second photon
+    columns:
+      evt:                   entry number in the input file; joins every file of one input
+      # the far-forward Λ (ReconstructedLambdas)
+      lam_index:             index in its collection
+      lam_pdg:               PDG code assigned by reconstruction
+      lam_charge:            electric charge [e]
+      lam_energy:            energy [GeV]
+      lam_mass:              mass [GeV/c²]
+      lam_mom_x:             momentum x [GeV/c]
+      lam_mom_y:             momentum y [GeV/c]
+      lam_mom_z:             momentum z [GeV/c]
+      lam_ref_pos_x:         reference point x [mm]
+      lam_ref_pos_y:         reference point y [mm]
+      lam_ref_pos_z:         reference point z [mm]
+      lam_pid_goodness:      goodness of the PID hypothesis
+      lam_type:              particle type flag
+      lam_n_clusters:        clusters attached
+      lam_n_tracks:          tracks attached
+      lam_n_particles:       daughter particles
+      lam_n_particle_ids:    ParticleID hypotheses
+      lam_cov_xx:            covariance matrix element xx (EDM4eic covMatrix)
+      lam_cov_xy:            covariance matrix element xy (EDM4eic covMatrix)
+      lam_cov_xz:            covariance matrix element xz (EDM4eic covMatrix)
+      lam_cov_yy:            covariance matrix element yy (EDM4eic covMatrix)
+      lam_cov_yz:            covariance matrix element yz (EDM4eic covMatrix)
+      lam_cov_zz:            covariance matrix element zz (EDM4eic covMatrix)
+      lam_cov_xt:            covariance matrix element xt (EDM4eic covMatrix)
+      lam_cov_yt:            covariance matrix element yt (EDM4eic covMatrix)
+      lam_cov_zt:            covariance matrix element zt (EDM4eic covMatrix)
+      lam_cov_tt:            covariance matrix element tt (EDM4eic covMatrix)
+      # its neutron
+      neut_index:            index in its collection
+      neut_pdg:              PDG code assigned by reconstruction
+      neut_charge:           electric charge [e]
+      neut_energy:           energy [GeV]
+      neut_mass:             mass [GeV/c²]
+      neut_mom_x:            momentum x [GeV/c]
+      neut_mom_y:            momentum y [GeV/c]
+      neut_mom_z:            momentum z [GeV/c]
+      neut_ref_pos_x:        reference point x [mm]
+      neut_ref_pos_y:        reference point y [mm]
+      neut_ref_pos_z:        reference point z [mm]
+      neut_pid_goodness:     goodness of the PID hypothesis
+      neut_type:             particle type flag
+      neut_n_clusters:       clusters attached
+      neut_n_tracks:         tracks attached
+      neut_n_particles:      daughter particles
+      neut_n_particle_ids:   ParticleID hypotheses
+      neut_cov_xx:           covariance matrix element xx (EDM4eic covMatrix)
+      neut_cov_xy:           covariance matrix element xy (EDM4eic covMatrix)
+      neut_cov_xz:           covariance matrix element xz (EDM4eic covMatrix)
+      neut_cov_yy:           covariance matrix element yy (EDM4eic covMatrix)
+      neut_cov_yz:           covariance matrix element yz (EDM4eic covMatrix)
+      neut_cov_zz:           covariance matrix element zz (EDM4eic covMatrix)
+      neut_cov_xt:           covariance matrix element xt (EDM4eic covMatrix)
+      neut_cov_yt:           covariance matrix element yt (EDM4eic covMatrix)
+      neut_cov_zt:           covariance matrix element zt (EDM4eic covMatrix)
+      neut_cov_tt:           covariance matrix element tt (EDM4eic covMatrix)
+      # its first photon
+      gamone_index:          index in its collection
+      gamone_pdg:            PDG code assigned by reconstruction
+      gamone_charge:         electric charge [e]
+      gamone_energy:         energy [GeV]
+      gamone_mass:           mass [GeV/c²]
+      gamone_mom_x:          momentum x [GeV/c]
+      gamone_mom_y:          momentum y [GeV/c]
+      gamone_mom_z:          momentum z [GeV/c]
+      gamone_ref_pos_x:      reference point x [mm]
+      gamone_ref_pos_y:      reference point y [mm]
+      gamone_ref_pos_z:      reference point z [mm]
+      gamone_pid_goodness:   goodness of the PID hypothesis
+      gamone_type:           particle type flag
+      gamone_n_clusters:     clusters attached
+      gamone_n_tracks:       tracks attached
+      gamone_n_particles:    daughter particles
+      gamone_n_particle_ids: ParticleID hypotheses
+      gamone_cov_xx:         covariance matrix element xx (EDM4eic covMatrix)
+      gamone_cov_xy:         covariance matrix element xy (EDM4eic covMatrix)
+      gamone_cov_xz:         covariance matrix element xz (EDM4eic covMatrix)
+      gamone_cov_yy:         covariance matrix element yy (EDM4eic covMatrix)
+      gamone_cov_yz:         covariance matrix element yz (EDM4eic covMatrix)
+      gamone_cov_zz:         covariance matrix element zz (EDM4eic covMatrix)
+      gamone_cov_xt:         covariance matrix element xt (EDM4eic covMatrix)
+      gamone_cov_yt:         covariance matrix element yt (EDM4eic covMatrix)
+      gamone_cov_zt:         covariance matrix element zt (EDM4eic covMatrix)
+      gamone_cov_tt:         covariance matrix element tt (EDM4eic covMatrix)
+      # its second photon
+      gamtwo_index:          index in its collection
+      gamtwo_pdg:            PDG code assigned by reconstruction
+      gamtwo_charge:         electric charge [e]
+      gamtwo_energy:         energy [GeV]
+      gamtwo_mass:           mass [GeV/c²]
+      gamtwo_mom_x:          momentum x [GeV/c]
+      gamtwo_mom_y:          momentum y [GeV/c]
+      gamtwo_mom_z:          momentum z [GeV/c]
+      gamtwo_ref_pos_x:      reference point x [mm]
+      gamtwo_ref_pos_y:      reference point y [mm]
+      gamtwo_ref_pos_z:      reference point z [mm]
+      gamtwo_pid_goodness:   goodness of the PID hypothesis
+      gamtwo_type:           particle type flag
+      gamtwo_n_clusters:     clusters attached
+      gamtwo_n_tracks:       tracks attached
+      gamtwo_n_particles:    daughter particles
+      gamtwo_n_particle_ids: ParticleID hypotheses
+      gamtwo_cov_xx:         covariance matrix element xx (EDM4eic covMatrix)
+      gamtwo_cov_xy:         covariance matrix element xy (EDM4eic covMatrix)
+      gamtwo_cov_xz:         covariance matrix element xz (EDM4eic covMatrix)
+      gamtwo_cov_yy:         covariance matrix element yy (EDM4eic covMatrix)
+      gamtwo_cov_yz:         covariance matrix element yz (EDM4eic covMatrix)
+      gamtwo_cov_zz:         covariance matrix element zz (EDM4eic covMatrix)
+      gamtwo_cov_xt:         covariance matrix element xt (EDM4eic covMatrix)
+      gamtwo_cov_yt:         covariance matrix element yt (EDM4eic covMatrix)
+      gamtwo_cov_zt:         covariance matrix element zt (EDM4eic covMatrix)
+      gamtwo_cov_tt:         covariance matrix element tt (EDM4eic covMatrix)
+
+  lambda_acceptance:
+    row: one event, with the Λ → p π⁻ acceptance ledger
+    needs: reco
+    keys: [evt]
+    columns:
+      evt:               entry number in the input file; joins every file of one input
+      lam_decay:         Λ decay type — 0 no daughters, 1 p π⁻, 2 n π⁰, 3 more than two daughters, 4 only p, 5 only π⁺, 6 only n, 7 only π⁰, 8 other; -1 without a Λ
+      n_lambdas:         Λs in MCParticles
+      lam_mom:           momentum of the first Λ [GeV/c]
+      lam_eta:           pseudorapidity of the first Λ
+      lam_decay_pos_z:   decay point z (the proton's production vertex), 0 without a proton [mm]
+      prot_mom:          momentum of the proton from the Λ [GeV/c]
+      prot_theta:        polar angle of the proton from the Λ [rad]
+      prot_eta:          pseudorapidity of the proton from the Λ
+      pimin_mom:         momentum of the π⁻ from the Λ [GeV/c]
+      pimin_theta:       polar angle of the π⁻ from the Λ [rad]
+      pimin_eta:         pseudorapidity of the π⁻ from the Λ
+      prot_n_hits_b0:    raw hits of the proton in the B0 tracker
+      prot_n_hits_rp:    raw hits of the proton in the Roman Pots
+      prot_n_hits_offm:  raw hits of the proton in the off-momentum tracker
+      pimin_n_hits_b0:   raw hits of the π⁻ in the B0 tracker
+      pimin_n_hits_rp:   raw hits of the π⁻ in the Roman Pots
+      pimin_n_hits_offm: raw hits of the π⁻ in the off-momentum tracker
+      prot_cent:         1 when central tracking reconstructed the proton (ReconstructedChargedParticleAssociations)
+      pimin_cent:        1 when central tracking reconstructed the π⁻
+      prot_b0trk:        1 when a B0 truth-seeded track belongs to the proton (empty collection in stock campaign files)
+      pimin_b0trk:       1 when a B0 truth-seeded track belongs to the π⁻
+      prot_rp_dp:        smallest |p − p_true| / p_true of any Roman Pot candidate, -1 without candidates
+      prot_offm_dp:      smallest |p − p_true| / p_true of any off-momentum candidate, -1 without candidates
+      n_rp:              Roman Pot candidates in the event
+
+  comb_candidates:
+    row: one proton or π⁻ candidate
+    needs: reco
+    links:
+      mc_index: mc_particles.prt_index
+    columns:
+      evt:                 entry number in the input file; joins every file of one input
+      cand_source:         source — 0 central tracking, 1 B0 truth-seeded tracks, 2 Roman Pots, 4 off-momentum tracker
+      cand_index:          index in the source collection
+      cand_charge:         electric charge [e]
+      cand_mom_x:          momentum x [GeV/c]
+      cand_mom_y:          momentum y [GeV/c]
+      cand_mom_z:          momentum z [GeV/c]
+      cand_mom:            momentum [GeV/c]
+      cand_theta:          polar angle [rad]
+      cand_eta:            pseudorapidity
+      cand_phi:            azimuthal angle [rad]
+      cand_ref_pos_x:      reference point or track position x [mm]
+      cand_ref_pos_y:      reference point or track position y [mm]
+      cand_ref_pos_z:      reference point or track position z [mm]
+      cand_quality:        PID goodness (source 0), track χ² (1), -1 (2, 4)
+      cand_ndf:            track degrees of freedom (1), -1 otherwise
+      cand_n_measurements: tracks of the particle (0), measurements of the track (1), -1 otherwise
+      mc_index:            index of the associated MC particle of largest weight in MCParticles, -1 without association
+      mc_weight:           association weight, -1 without association
+      mc_pdg:              PDG code of the associated MC particle, 0 without association
+      mc_gen_status:       generator status of the associated MC particle, -1 without association
+      is_sul_prot:         1 when the label is the proton of the first Λ
+      is_sul_pimin:        1 when the label is the π⁻ of the first Λ
+      dp_prot:             relative momentum distance to the true proton (sources 2, 4), -1 otherwise
+      dth_prot:            angle distance to the true proton (sources 2, 4), -1 otherwise
+      dp_pimin:            relative momentum distance to the true π⁻ (sources 2, 4), -1 otherwise
+      dth_pimin:           angle distance to the true π⁻ (sources 2, 4), -1 otherwise
+
+  comb_candidates_events:
+    row: one event, with the first Λ's truth summary
+    needs: reco
+    keys: [evt]
+    links:
+      prot_index: mc_particles.prt_index
+      pimin_index: mc_particles.prt_index
+    columns:
+      evt:             entry number in the input file; joins every file of one input
+      n_lambdas:       Λs in MCParticles
+      lam_decay:       Λ decay type — 0 no daughters, 1 p π⁻, 2 n π⁰, 3 more than two daughters, 4 only p, 5 only π⁺, 6 only n, 7 only π⁰, 8 other; -1 without a Λ
+      prot_index:      index of the first Λ's proton in MCParticles, -1 without one
+      pimin_index:     index of the first Λ's π⁻ in MCParticles, -1 without one
+      lam_mom:         momentum of the first Λ [GeV/c]
+      lam_eta:         pseudorapidity of the first Λ
+      lam_phi:         azimuthal angle of the first Λ [rad]
+      lam_decay_pos_x: decay point x (the proton's production vertex), 0 without a proton [mm]
+      lam_decay_pos_y: decay point y, 0 without a proton [mm]
+      lam_decay_pos_z: decay point z, 0 without a proton [mm]
+      prot_mom:        momentum of the first Λ's proton [GeV/c]
+      prot_theta:      polar angle of the first Λ's proton [rad]
+      prot_phi:        azimuthal angle of the first Λ's proton [rad]
+      pimin_mom:       momentum of the first Λ's π⁻ [GeV/c]
+      pimin_theta:     polar angle of the first Λ's π⁻ [rad]
+      pimin_phi:       azimuthal angle of the first Λ's π⁻ [rad]
+
+  acceptance_ppim:
+    row: one event with a Λ → p π⁻, with per-detector hit flags
+    needs: sim
+    prefixes:
+      lam: Λ
+      prot: proton from the Λ
+      pimin: π⁻ from the Λ
+    links:
+      lam_index: mc_particles.prt_index
+      prot_index: mc_particles.prt_index
+      pimin_index: mc_particles.prt_index
+    columns:
+      evt:                          entry number in the input file; joins every file of one input
+      lam_is_first:                 1 for the first Λ of the event
+      lam_decay:                    Λ decay type — 0 no daughters, 1 p π⁻, 2 n π⁰, 3 more than two daughters, 4 only p, 5 only π⁺, 6 only n, 7 only π⁰, 8 other
+      # Λ
+      lam_index:                    index in MCParticles
+      lam_pdg:                      PDG code
+      lam_gen_status:               generator status
+      lam_sim_status:               Geant4 status bit field
+      lam_mom_x:                    momentum x [GeV/c]
+      lam_mom_y:                    momentum y [GeV/c]
+      lam_mom_z:                    momentum z [GeV/c]
+      lam_vtx_pos_x:                production vertex x [mm]
+      lam_vtx_pos_y:                production vertex y [mm]
+      lam_vtx_pos_z:                production vertex z [mm]
+      lam_end_pos_x:                end point x [mm]
+      lam_end_pos_y:                end point y [mm]
+      lam_end_pos_z:                end point z [mm]
+      lam_vtx_time:                 time at the production vertex [ns]
+      lam_n_daughters:              number of daughters
+      lam_n_parents:                number of parents
+      # proton from the Λ
+      prot_index:                   index in MCParticles
+      prot_pdg:                     PDG code
+      prot_gen_status:              generator status
+      prot_sim_status:              Geant4 status bit field
+      prot_mom_x:                   momentum x [GeV/c]
+      prot_mom_y:                   momentum y [GeV/c]
+      prot_mom_z:                   momentum z [GeV/c]
+      prot_vtx_pos_x:               production vertex x [mm]
+      prot_vtx_pos_y:               production vertex y [mm]
+      prot_vtx_pos_z:               production vertex z [mm]
+      prot_end_pos_x:               end point x [mm]
+      prot_end_pos_y:               end point y [mm]
+      prot_end_pos_z:               end point z [mm]
+      prot_vtx_time:                time at the production vertex [ns]
+      prot_n_daughters:             number of daughters
+      prot_n_parents:               number of parents
+      # π⁻ from the Λ
+      pimin_index:                  index in MCParticles
+      pimin_pdg:                    PDG code
+      pimin_gen_status:             generator status
+      pimin_sim_status:             Geant4 status bit field
+      pimin_mom_x:                  momentum x [GeV/c]
+      pimin_mom_y:                  momentum y [GeV/c]
+      pimin_mom_z:                  momentum z [GeV/c]
+      pimin_vtx_pos_x:              production vertex x [mm]
+      pimin_vtx_pos_y:              production vertex y [mm]
+      pimin_vtx_pos_z:              production vertex z [mm]
+      pimin_end_pos_x:              end point x [mm]
+      pimin_end_pos_y:              end point y [mm]
+      pimin_end_pos_z:              end point z [mm]
+      pimin_vtx_time:               time at the production vertex [ns]
+      pimin_n_daughters:            number of daughters
+      pimin_n_parents:              number of parents
+      prot_B0TrackerHits:           1 when the proton from the Λ left a hit in B0TrackerHits
+      prot_BackwardMPGDEndcapHits:  1 when the proton from the Λ left a hit in BackwardMPGDEndcapHits
+      prot_DIRCBarHits:             1 when the proton from the Λ left a hit in DIRCBarHits
+      prot_DRICHHits:               1 when the proton from the Λ left a hit in DRICHHits
+      prot_ForwardMPGDEndcapHits:   1 when the proton from the Λ left a hit in ForwardMPGDEndcapHits
+      prot_ForwardOffMTrackerHits:  1 when the proton from the Λ left a hit in ForwardOffMTrackerHits
+      prot_ForwardRomanPotHits:     1 when the proton from the Λ left a hit in ForwardRomanPotHits
+      prot_LumiSpecTrackerHits:     1 when the proton from the Λ left a hit in LumiSpecTrackerHits
+      prot_MPGDBarrelHits:          1 when the proton from the Λ left a hit in MPGDBarrelHits
+      prot_OuterMPGDBarrelHits:     1 when the proton from the Λ left a hit in OuterMPGDBarrelHits
+      prot_RICHEndcapNHits:         1 when the proton from the Λ left a hit in RICHEndcapNHits
+      prot_SiBarrelHits:            1 when the proton from the Λ left a hit in SiBarrelHits
+      prot_TOFBarrelHits:           1 when the proton from the Λ left a hit in TOFBarrelHits
+      prot_TOFEndcapHits:           1 when the proton from the Λ left a hit in TOFEndcapHits
+      prot_TaggerTrackerHits:       1 when the proton from the Λ left a hit in TaggerTrackerHits
+      prot_TrackerEndcapHits:       1 when the proton from the Λ left a hit in TrackerEndcapHits
+      prot_VertexBarrelHits:        1 when the proton from the Λ left a hit in VertexBarrelHits
+      prot_EcalFarForwardZDCHits:   1 when the proton from the Λ left a hit in EcalFarForwardZDCHits
+      prot_B0ECalHits:              1 when the proton from the Λ left a hit in B0ECalHits
+      prot_EcalEndcapPHits:         1 when the proton from the Λ left a hit in EcalEndcapPHits
+      prot_HcalFarForwardZDCHits:   1 when the proton from the Λ left a hit in HcalFarForwardZDCHits
+      prot_HcalEndcapPInsertHits:   1 when the proton from the Λ left a hit in HcalEndcapPInsertHits
+      prot_LFHCALHits:              1 when the proton from the Λ left a hit in LFHCALHits
+      pimin_B0TrackerHits:          1 when the π⁻ from the Λ left a hit in B0TrackerHits
+      pimin_BackwardMPGDEndcapHits: 1 when the π⁻ from the Λ left a hit in BackwardMPGDEndcapHits
+      pimin_DIRCBarHits:            1 when the π⁻ from the Λ left a hit in DIRCBarHits
+      pimin_DRICHHits:              1 when the π⁻ from the Λ left a hit in DRICHHits
+      pimin_ForwardMPGDEndcapHits:  1 when the π⁻ from the Λ left a hit in ForwardMPGDEndcapHits
+      pimin_ForwardOffMTrackerHits: 1 when the π⁻ from the Λ left a hit in ForwardOffMTrackerHits
+      pimin_ForwardRomanPotHits:    1 when the π⁻ from the Λ left a hit in ForwardRomanPotHits
+      pimin_LumiSpecTrackerHits:    1 when the π⁻ from the Λ left a hit in LumiSpecTrackerHits
+      pimin_MPGDBarrelHits:         1 when the π⁻ from the Λ left a hit in MPGDBarrelHits
+      pimin_OuterMPGDBarrelHits:    1 when the π⁻ from the Λ left a hit in OuterMPGDBarrelHits
+      pimin_RICHEndcapNHits:        1 when the π⁻ from the Λ left a hit in RICHEndcapNHits
+      pimin_SiBarrelHits:           1 when the π⁻ from the Λ left a hit in SiBarrelHits
+      pimin_TOFBarrelHits:          1 when the π⁻ from the Λ left a hit in TOFBarrelHits
+      pimin_TOFEndcapHits:          1 when the π⁻ from the Λ left a hit in TOFEndcapHits
+      pimin_TaggerTrackerHits:      1 when the π⁻ from the Λ left a hit in TaggerTrackerHits
+      pimin_TrackerEndcapHits:      1 when the π⁻ from the Λ left a hit in TrackerEndcapHits
+      pimin_VertexBarrelHits:       1 when the π⁻ from the Λ left a hit in VertexBarrelHits
+      pimin_EcalFarForwardZDCHits:  1 when the π⁻ from the Λ left a hit in EcalFarForwardZDCHits
+      pimin_B0ECalHits:             1 when the π⁻ from the Λ left a hit in B0ECalHits
+      pimin_EcalEndcapPHits:        1 when the π⁻ from the Λ left a hit in EcalEndcapPHits
+      pimin_HcalFarForwardZDCHits:  1 when the π⁻ from the Λ left a hit in HcalFarForwardZDCHits
+      pimin_HcalEndcapPInsertHits:  1 when the π⁻ from the Λ left a hit in HcalEndcapPInsertHits
+      pimin_LFHCALHits:             1 when the π⁻ from the Λ left a hit in LFHCALHits
+
+  acceptance_ppim_prot_hits:
+    row: one hit of the Λ's proton
+    needs: sim
+    links:
+      lam_index: mc_particles.prt_index
+    columns:
+      evt:             entry number in the input file; joins every file of one input
+      lam_index:       index of the Λ in MCParticles
+      hit_collection:  sim hit collection name
+      hit_index:       index of the hit in that collection
+      hit_pos_x:       hit position x [mm]
+      hit_pos_y:       hit position y [mm]
+      hit_pos_z:       hit position z [mm]
+      hit_edep:        energy deposit (calorimeter rows carry the hit energy) [GeV]
+      hit_time:        hit time (calorimeter rows carry the first contribution's time) [ns]
+      hit_path_length: path length in the sensor (0 in calorimeter rows) [mm]
+
+  acceptance_ppim_pimin_hits:
+    row: one hit of the Λ's π⁻
+    needs: sim
+    links:
+      lam_index: mc_particles.prt_index
+    columns:
+      evt:             entry number in the input file; joins every file of one input
+      lam_index:       index of the Λ in MCParticles
+      hit_collection:  sim hit collection name
+      hit_index:       index of the hit in that collection
+      hit_pos_x:       hit position x [mm]
+      hit_pos_y:       hit position y [mm]
+      hit_pos_z:       hit position z [mm]
+      hit_edep:        energy deposit (calorimeter rows carry the hit energy) [GeV]
+      hit_time:        hit time (calorimeter rows carry the first contribution's time) [ns]
+      hit_path_length: path length in the sensor (0 in calorimeter rows) [mm]
+
+  acceptance_npi0:
+    row: one event, with the first Λ and n π⁰ → n γ γ detection flags
+    needs: sim
+    prefixes:
+      lam: Λ
+      prot: proton from the Λ
+      pimin: π⁻ from the Λ
+      neut: neutron from the Λ
+      pizero: π⁰ from the Λ
+      gamone: first photon from the π⁰
+      gamtwo: second photon from the π⁰
+    links:
+      lam_index: mc_particles.prt_index
+      prot_index: mc_particles.prt_index
+      pimin_index: mc_particles.prt_index
+      neut_index: mc_particles.prt_index
+      pizero_index: mc_particles.prt_index
+      gamone_index: mc_particles.prt_index
+      gamtwo_index: mc_particles.prt_index
+    columns:
+      evt:                          entry number in the input file; joins every file of one input
+      lam_is_first:                 1 for the first Λ of the event
+      lam_decay:                    Λ decay type — 0 no daughters, 1 p π⁻, 2 n π⁰, 3 more than two daughters, 4 only p, 5 only π⁺, 6 only n, 7 only π⁰, 8 other
+      # Λ
+      lam_index:                    index in MCParticles
+      lam_pdg:                      PDG code
+      lam_gen_status:               generator status
+      lam_sim_status:               Geant4 status bit field
+      lam_mom_x:                    momentum x [GeV/c]
+      lam_mom_y:                    momentum y [GeV/c]
+      lam_mom_z:                    momentum z [GeV/c]
+      lam_vtx_pos_x:                production vertex x [mm]
+      lam_vtx_pos_y:                production vertex y [mm]
+      lam_vtx_pos_z:                production vertex z [mm]
+      lam_end_pos_x:                end point x [mm]
+      lam_end_pos_y:                end point y [mm]
+      lam_end_pos_z:                end point z [mm]
+      lam_vtx_time:                 time at the production vertex [ns]
+      lam_n_daughters:              number of daughters
+      lam_n_parents:                number of parents
+      # proton from the Λ
+      prot_index:                   index in MCParticles
+      prot_pdg:                     PDG code
+      prot_gen_status:              generator status
+      prot_sim_status:              Geant4 status bit field
+      prot_mom_x:                   momentum x [GeV/c]
+      prot_mom_y:                   momentum y [GeV/c]
+      prot_mom_z:                   momentum z [GeV/c]
+      prot_vtx_pos_x:               production vertex x [mm]
+      prot_vtx_pos_y:               production vertex y [mm]
+      prot_vtx_pos_z:               production vertex z [mm]
+      prot_end_pos_x:               end point x [mm]
+      prot_end_pos_y:               end point y [mm]
+      prot_end_pos_z:               end point z [mm]
+      prot_vtx_time:                time at the production vertex [ns]
+      prot_n_daughters:             number of daughters
+      prot_n_parents:               number of parents
+      # π⁻ from the Λ
+      pimin_index:                  index in MCParticles
+      pimin_pdg:                    PDG code
+      pimin_gen_status:             generator status
+      pimin_sim_status:             Geant4 status bit field
+      pimin_mom_x:                  momentum x [GeV/c]
+      pimin_mom_y:                  momentum y [GeV/c]
+      pimin_mom_z:                  momentum z [GeV/c]
+      pimin_vtx_pos_x:              production vertex x [mm]
+      pimin_vtx_pos_y:              production vertex y [mm]
+      pimin_vtx_pos_z:              production vertex z [mm]
+      pimin_end_pos_x:              end point x [mm]
+      pimin_end_pos_y:              end point y [mm]
+      pimin_end_pos_z:              end point z [mm]
+      pimin_vtx_time:               time at the production vertex [ns]
+      pimin_n_daughters:            number of daughters
+      pimin_n_parents:              number of parents
+      # neutron from the Λ
+      neut_index:                   index in MCParticles
+      neut_pdg:                     PDG code
+      neut_gen_status:              generator status
+      neut_sim_status:              Geant4 status bit field
+      neut_mom_x:                   momentum x [GeV/c]
+      neut_mom_y:                   momentum y [GeV/c]
+      neut_mom_z:                   momentum z [GeV/c]
+      neut_vtx_pos_x:               production vertex x [mm]
+      neut_vtx_pos_y:               production vertex y [mm]
+      neut_vtx_pos_z:               production vertex z [mm]
+      neut_end_pos_x:               end point x [mm]
+      neut_end_pos_y:               end point y [mm]
+      neut_end_pos_z:               end point z [mm]
+      neut_vtx_time:                time at the production vertex [ns]
+      neut_n_daughters:             number of daughters
+      neut_n_parents:               number of parents
+      # π⁰ from the Λ
+      pizero_index:                 index in MCParticles
+      pizero_pdg:                   PDG code
+      pizero_gen_status:            generator status
+      pizero_sim_status:            Geant4 status bit field
+      pizero_mom_x:                 momentum x [GeV/c]
+      pizero_mom_y:                 momentum y [GeV/c]
+      pizero_mom_z:                 momentum z [GeV/c]
+      pizero_vtx_pos_x:             production vertex x [mm]
+      pizero_vtx_pos_y:             production vertex y [mm]
+      pizero_vtx_pos_z:             production vertex z [mm]
+      pizero_end_pos_x:             end point x [mm]
+      pizero_end_pos_y:             end point y [mm]
+      pizero_end_pos_z:             end point z [mm]
+      pizero_vtx_time:              time at the production vertex [ns]
+      pizero_n_daughters:           number of daughters
+      pizero_n_parents:             number of parents
+      # first photon from the π⁰
+      gamone_index:                 index in MCParticles
+      gamone_pdg:                   PDG code
+      gamone_gen_status:            generator status
+      gamone_sim_status:            Geant4 status bit field
+      gamone_mom_x:                 momentum x [GeV/c]
+      gamone_mom_y:                 momentum y [GeV/c]
+      gamone_mom_z:                 momentum z [GeV/c]
+      gamone_vtx_pos_x:             production vertex x [mm]
+      gamone_vtx_pos_y:             production vertex y [mm]
+      gamone_vtx_pos_z:             production vertex z [mm]
+      gamone_end_pos_x:             end point x [mm]
+      gamone_end_pos_y:             end point y [mm]
+      gamone_end_pos_z:             end point z [mm]
+      gamone_vtx_time:              time at the production vertex [ns]
+      gamone_n_daughters:           number of daughters
+      gamone_n_parents:             number of parents
+      # second photon from the π⁰
+      gamtwo_index:                 index in MCParticles
+      gamtwo_pdg:                   PDG code
+      gamtwo_gen_status:            generator status
+      gamtwo_sim_status:            Geant4 status bit field
+      gamtwo_mom_x:                 momentum x [GeV/c]
+      gamtwo_mom_y:                 momentum y [GeV/c]
+      gamtwo_mom_z:                 momentum z [GeV/c]
+      gamtwo_vtx_pos_x:             production vertex x [mm]
+      gamtwo_vtx_pos_y:             production vertex y [mm]
+      gamtwo_vtx_pos_z:             production vertex z [mm]
+      gamtwo_end_pos_x:             end point x [mm]
+      gamtwo_end_pos_y:             end point y [mm]
+      gamtwo_end_pos_z:             end point z [mm]
+      gamtwo_vtx_time:              time at the production vertex [ns]
+      gamtwo_n_daughters:           number of daughters
+      gamtwo_n_parents:             number of parents
+      neut_HcalFarForwardZDCHits:   1 when the neutron from the Λ left a hit in HcalFarForwardZDCHits
+      neut_HcalEndcapPInsertHits:   1 when the neutron from the Λ left a hit in HcalEndcapPInsertHits
+      neut_LFHCALHits:              1 when the neutron from the Λ left a hit in LFHCALHits
+      gamone_EcalFarForwardZDCHits: 1 when the first photon from the π⁰ left a hit in EcalFarForwardZDCHits
+      gamtwo_EcalFarForwardZDCHits: 1 when the second photon from the π⁰ left a hit in EcalFarForwardZDCHits
+      gamone_B0ECalHits:            1 when the first photon from the π⁰ left a hit in B0ECalHits
+      gamtwo_B0ECalHits:            1 when the second photon from the π⁰ left a hit in B0ECalHits
+      gamone_EcalEndcapPHits:       1 when the first photon from the π⁰ left a hit in EcalEndcapPHits
+      gamtwo_EcalEndcapPHits:       1 when the second photon from the π⁰ left a hit in EcalEndcapPHits
+
+  combinatorics_ppim:
+    row: one (proton candidate, pion candidate) pair
+    needs: sim
+    prefixes:
+      pimin: pion candidate (a particle with at least three B0 tracker hits)
+      prot: proton candidate (a particle with at least two Roman Pot hits)
+    links:
+      true_prot_index: mc_particles.prt_index
+      true_pimin_index: mc_particles.prt_index
+      pimin_index: mc_particles.prt_index
+      prot_index: mc_particles.prt_index
+    columns:
+      evt:                    entry number in the input file; joins every file of one input
+      is_true_lam:            1 when both candidates are the first Λ's proton and π⁻
+      true_prot_index:        index of the first Λ's proton in MCParticles, -1 without one
+      true_pimin_index:       index of the first Λ's π⁻ in MCParticles, -1 without one
+      # pion candidate (a particle with at least three B0 tracker hits)
+      pimin_index:            index in MCParticles
+      pimin_pdg:              PDG code
+      pimin_gen_status:       generator status
+      pimin_sim_status:       Geant4 status bit field
+      pimin_mom_x:            momentum x [GeV/c]
+      pimin_mom_y:            momentum y [GeV/c]
+      pimin_mom_z:            momentum z [GeV/c]
+      pimin_vtx_pos_x:        production vertex x [mm]
+      pimin_vtx_pos_y:        production vertex y [mm]
+      pimin_vtx_pos_z:        production vertex z [mm]
+      pimin_end_pos_x:        end point x [mm]
+      pimin_end_pos_y:        end point y [mm]
+      pimin_end_pos_z:        end point z [mm]
+      pimin_vtx_time:         time at the production vertex [ns]
+      pimin_n_daughters:      number of daughters
+      pimin_n_parents:        number of parents
+      pimin_n_hits_b0:        hits of the pion candidate in the B0 tracker
+      pimin_first_b0_pos_x:   first B0 tracker hit of the pion candidate, x [mm]
+      pimin_first_b0_pos_y:   first B0 tracker hit of the pion candidate, y [mm]
+      pimin_first_b0_pos_z:   first B0 tracker hit of the pion candidate, z [mm]
+      pimin_ecal_contrib:     1 when the pion candidate contributed to a B0 ECAL hit
+      pimin_first_ecal_pos_x: first B0 ECAL hit of the pion candidate, x [mm]
+      pimin_first_ecal_pos_y: first B0 ECAL hit of the pion candidate, y [mm]
+      pimin_first_ecal_pos_z: first B0 ECAL hit of the pion candidate, z [mm]
+      # proton candidate (a particle with at least two Roman Pot hits)
+      prot_index:             index in MCParticles
+      prot_pdg:               PDG code
+      prot_gen_status:        generator status
+      prot_sim_status:        Geant4 status bit field
+      prot_mom_x:             momentum x [GeV/c]
+      prot_mom_y:             momentum y [GeV/c]
+      prot_mom_z:             momentum z [GeV/c]
+      prot_vtx_pos_x:         production vertex x [mm]
+      prot_vtx_pos_y:         production vertex y [mm]
+      prot_vtx_pos_z:         production vertex z [mm]
+      prot_end_pos_x:         end point x [mm]
+      prot_end_pos_y:         end point y [mm]
+      prot_end_pos_z:         end point z [mm]
+      prot_vtx_time:          time at the production vertex [ns]
+      prot_n_daughters:       number of daughters
+      prot_n_parents:         number of parents
+      prot_n_hits_rp:         hits of the proton candidate in the Roman Pots
+      prot_first_rp_pos_x:    first Roman Pot hit of the proton candidate, x [mm]
+      prot_first_rp_pos_y:    first Roman Pot hit of the proton candidate, y [mm]
+      prot_first_rp_pos_z:    first Roman Pot hit of the proton candidate, z [mm]
