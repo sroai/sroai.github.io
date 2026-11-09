@@ -45,6 +45,7 @@ export default defineConfig({
                         { text: 'Overview', link: '/ai-epic-background/' },
                         { text: 'Data Format', link: '/ai-epic-background/data-format' },
                         { text: 'CSV Schema', link: '/ai-epic-background/csv-schema' },
+                        { text: 'CSV Example Event', link: '/ai-epic-background/csv-example' },
                     ]
                 },
                 {

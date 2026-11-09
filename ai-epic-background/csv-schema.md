@@ -32,6 +32,7 @@ their `calo_clusters.clu_index` holds what is now `clu_link_index`.
   `gamone_` the first photon of its π⁰, …); an open box shows the prefixes as headings.
 - Units: GeV, GeV/c, mm, ns, rad, charge in e. An empty field means the value does not exist for that row.
 
+[CSV Example Event](./csv-example) follows one real event through the files.
 [Data Format](./data-format) describes how the files are named, how hits are matched to particles and how
 `prt_origin` separates signal from background.
 
