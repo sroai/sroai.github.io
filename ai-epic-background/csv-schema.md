@@ -13,6 +13,10 @@ paired simulation file, and writes the {{ Object.keys(schema.files).length }} CS
 ({{ schema.nColumns }} columns). Each box is one file. Click a box to list all its columns with their meaning
 and unit; **Find a column** searches every file.
 
+The columns are those of eic2ai with the 2026-11 changes. Files converted before them lack `prt_primary_*`,
+`clu_link_index`, `elec_epz_*`, `mc_vtx_*` and the `mc_lam_*` / `mc_elec_index` columns of `reco_dis`, and
+their `calo_clusters.clu_index` holds what is now `clu_link_index`.
+
 <CsvSchema :schema="schema" />
 
 ## Reading the diagram

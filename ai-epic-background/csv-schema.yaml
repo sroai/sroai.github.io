@@ -38,6 +38,8 @@ files:
     needs: reco
     links:
       prt_index: mc_particles.prt_index
+      prt_primary_index: mc_particles.prt_index
+      prt_primary_child_index: mc_particles.prt_index
     columns:
       evt:                 entry number in the input file; joins every file of one input
       hit_index:           index of the hit association in its association collection
@@ -71,12 +73,18 @@ files:
       trk_hit_time_err:    time uncertainty [ns]
       trk_hit_edep:        energy deposited in the sensor [GeV]
       trk_hit_edep_err:    energy deposit uncertainty [GeV]
+      prt_primary_index:    index in MCParticles of the generator particle that prt descends from (prt itself when it is one); -1 when the chain has none
+      prt_primary_pdg:      PDG code of that generator particle, 0 with index -1
+      prt_primary_child_index: index in MCParticles of the primary's daughter on the chain to prt (the p, π⁻, n or π⁰ for a Λ that Geant4 decays); -1 when prt is the primary
+      prt_primary_child_pdg: PDG code of that daughter, 0 with index -1
 
   cal_hits:
     row: one calorimeter hit, labeled from the simulated cell
     needs: reco + sim
     links:
       prt_index: mc_particles.prt_index
+      prt_primary_index: mc_particles.prt_index
+      prt_primary_child_index: mc_particles.prt_index
     columns:
       evt:                 entry number in the input file; joins every file of one input
       cal_hit_collection:  rec-hit collection name (the detector)
@@ -110,17 +118,24 @@ files:
       prt_end_pos_x:       end point x [mm]
       prt_end_pos_y:       end point y [mm]
       prt_end_pos_z:       end point z [mm]
+      prt_primary_index:    index in MCParticles of the generator particle that prt descends from (prt itself when it is one); -1 when the chain has none
+      prt_primary_pdg:      PDG code of that generator particle, 0 with index -1
+      prt_primary_child_index: index in MCParticles of the primary's daughter on the chain to prt (the p, π⁻, n or π⁰ for a Λ that Geant4 decays); -1 when prt is the primary
+      prt_primary_child_pdg: PDG code of that daughter, 0 with index -1
 
   calo_clusters:
-    row: one cluster ↔ MC particle association
+    row: one cluster ↔ MC particle link; the rows of one cluster share (evt, clu_collection, clu_index)
     needs: reco
-    keys: [evt, clu_collection, clu_index]
+    keys: [evt, clu_collection, clu_link_index]
     links:
       prt_index: mc_particles.prt_index
+      prt_primary_index: mc_particles.prt_index
+      prt_primary_child_index: mc_particles.prt_index
     columns:
       evt:               entry number in the input file; joins every file of one input
-      clu_index:         index of the association in its collection
-      clu_collection:    association collection name (detector + algorithm)
+      clu_index:         index of the cluster in its cluster collection (before 2026-11 this column held the association index, now clu_link_index)
+      clu_link_index:    index of the cluster ↔ MC particle association in clu_collection
+      clu_collection:    association collection name (detector + algorithm); the cluster collection has Clusters in place of ClusterAssociations
       prt_index:         index of the particle in MCParticles
       prt_pdg:           PDG code (11 e⁻, 22 γ, 211 π⁺, 2112 n, 2212 p, 3122 Λ, …)
       prt_gen_status:    generator status — 1 final state, 2 decayed by the generator, 4 beam, 0 made by Geant4; background particles carry an added multiple of 1000
@@ -156,6 +171,10 @@ files:
       clu_theta:         intrinsic polar angle [rad]
       clu_phi:           intrinsic azimuthal angle [rad]
       clu_assoc_weight:  association weight
+      prt_primary_index:       index in MCParticles of the generator particle that prt descends from (prt itself when it is one); -1 when the chain has none
+      prt_primary_pdg:         PDG code of that generator particle, 0 with index -1
+      prt_primary_child_index: index in MCParticles of the primary's daughter on the chain to prt (the p, π⁻, n or π⁰ for a Λ that Geant4 decays); -1 when prt is the primary
+      prt_primary_child_pdg:   PDG code of that daughter, 0 with index -1
 
   mc_dis:
     row: one event, with the generator's DIS kinematics
@@ -388,6 +407,10 @@ files:
     row: one event, with reconstructed and true DIS kinematics
     needs: reco
     keys: [evt]
+    links:
+      mc_elec_index: mc_particles.prt_index
+      mc_lam_index: mc_particles.prt_index
+      elec_epz_index: reco_particles.rec_index
     columns:
       evt:                 entry number in the input file; joins every file of one input
       da_x:                Bjorken x, double-angle method
@@ -464,6 +487,31 @@ files:
       mc_beam_elec_mom_x:  momentum x of the true beam electron [GeV/c]
       mc_beam_elec_mom_y:  momentum y of the true beam electron [GeV/c]
       mc_beam_elec_mom_z:  momentum z of the true beam electron [GeV/c]
+      mc_elec_index:          index of the true scattered electron in MCParticles
+      mc_lam_index:           index of the true Λ (first in MCParticles) in MCParticles
+      mc_lam_decay:           decay type of that Λ — 0 no daughters, 1 p π⁻, 2 n π⁰, 3 more than two daughters, 4 only p, 5 only π⁺, 6 only n, 7 only π⁰, 8 other
+      mc_lam_end_pos_x:       decay point of the true Λ, x [mm]
+      mc_lam_end_pos_y:       decay point of the true Λ, y [mm]
+      mc_lam_end_pos_z:       decay point of the true Λ, z [mm]
+      mc_vtx_pos_x:           generated vertex (production vertex of the true scattered electron), x [mm]
+      mc_vtx_pos_y:           generated vertex, y [mm]
+      mc_vtx_pos_z:           generated vertex, z [mm]
+      mc_vtx_time:            generated vertex time [ns]
+      elec_epz_n_candidates:  electron candidates ranked by E − pz (ScatteredElectronsEMinusPz); empty when the file has no such collection
+      elec_epz_index:         index of the first E − pz candidate in ReconstructedParticles (no truth used)
+      elec_epz_energy:        E − pz electron, energy [GeV]
+      elec_epz_mom_x:         E − pz electron, momentum x [GeV/c]
+      elec_epz_mom_y:         E − pz electron, momentum y [GeV/c]
+      elec_epz_mom_z:         E − pz electron, momentum z [GeV/c]
+      elec_epz_ref_pos_x:     E − pz electron, reference point x [mm]
+      elec_epz_ref_pos_y:     E − pz electron, reference point y [mm]
+      elec_epz_ref_pos_z:     E − pz electron, reference point z [mm]
+      elec_epz_pid_goodness:  E − pz electron, goodness of the PID hypothesis
+      elec_epz_type:          E − pz electron, particle type flag
+      elec_epz_n_clusters:    E − pz electron, clusters attached
+      elec_epz_n_tracks:      E − pz electron, tracks attached
+      elec_epz_n_particles:   E − pz electron, daughter particles
+      elec_epz_n_particle_ids: E − pz electron, ParticleID hypotheses
 
   reco_ff_lambda:
     row: one far-forward Λ reconstructed as n γ γ
