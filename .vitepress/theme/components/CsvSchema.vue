@@ -200,8 +200,7 @@ watch([open, needle], () => nextTick(scheduleDraw));
                      @mouseenter="hovered = name" @mouseleave="hovered = ''">
               <button type="button" class="cs-head-row" :aria-expanded="!!open[name]" @click="toggle(name)">
                 <span class="cs-file">{{ name }}</span>
-                <span class="cs-count">{{ files[name].columns.length }} columns</span>
-                <span class="cs-chevron">{{ open[name] ? "▾" : "▸" }}</span>
+                <span class="cs-count">{{ files[name].columns.length }} columns <span class="cs-chevron">{{ open[name] ? "▾" : "▸" }}</span></span>
               </button>
               <p class="cs-row-text">
                 {{ files[name].row }}<template v-if="open[name]"> · <code>&lt;stem&gt;.{{ name }}.csv.zip</code> · needs {{ files[name].needs }}</template>
@@ -237,8 +236,7 @@ watch([open, needle], () => nextTick(scheduleDraw));
                    @mouseenter="hovered = name" @mouseleave="hovered = ''">
             <button type="button" class="cs-head-row" :aria-expanded="!!open[name]" @click="toggle(name)">
               <span class="cs-file">{{ name }}</span>
-              <span class="cs-count">{{ files[name].columns.length }} columns</span>
-              <span class="cs-chevron">{{ open[name] ? "▾" : "▸" }}</span>
+              <span class="cs-count">{{ files[name].columns.length }} columns <span class="cs-chevron">{{ open[name] ? "▾" : "▸" }}</span></span>
             </button>
             <p class="cs-row-text">
               {{ files[name].row }}<template v-if="open[name]"> · <code>&lt;stem&gt;.{{ name }}.csv.zip</code> · needs {{ files[name].needs }}</template>
@@ -322,7 +320,7 @@ watch([open, needle], () => nextTick(scheduleDraw));
 
 .cs-diagram {
   position: relative;
-  container-type: inline-size;
+  container: diagram / inline-size;
 }
 
 .cs-arrows {
@@ -394,6 +392,7 @@ watch([open, needle], () => nextTick(scheduleDraw));
 
 .cs-box {
   position: relative;
+  container: box / inline-size;
   min-width: 0;
   border: 1px solid var(--vp-c-border);
   border-radius: 8px;
@@ -434,6 +433,11 @@ watch([open, needle], () => nextTick(scheduleDraw));
   color: var(--vp-c-text-3);
   font-size: 11px;
   white-space: nowrap;
+}
+
+.cs-count .cs-chevron {
+  margin-left: 4px;
+  font-size: 13px;
 }
 
 .cs-chevron {
@@ -538,7 +542,7 @@ watch([open, needle], () => nextTick(scheduleDraw));
 }
 
 /* narrow content: one column, no arrows (the → links stay clickable) */
-@container (max-width: 760px) {
+@container diagram (max-width: 760px) {
   .cs-lanes {
     grid-template-columns: minmax(0, 1fr) !important;
     row-gap: 18px;
@@ -551,8 +555,10 @@ watch([open, needle], () => nextTick(scheduleDraw));
   .cs-band {
     margin-top: 28px;
   }
+}
 
-  /* open boxes: the name on its own line, description and unit below it */
+/* a narrow open box: the name on its own line, description and unit below it */
+@container box (max-width: 440px) {
   .cs-table.full {
     grid-template-columns: 14px minmax(0, 1fr);
   }
